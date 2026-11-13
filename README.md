@@ -56,7 +56,8 @@ Telegram Trigger → Read Clients → Route & Parse → Registered?
 └── docs/
     ├── google-cloud-console.md        # Google project, APIs, service account
     ├── pharmacy-stock-management.md   # main guide: alerts, sheets, onboarding, bot management
-    └── telegram-stock-bot.md          # stock bot: node-by-node build guide and commands
+    ├── telegram-stock-bot.md          # stock bot: node-by-node build guide and commands
+    └── multi-pharmacy-setup.md        # running the system for many pharmacies
 ```
 
 ## Requirements
@@ -73,7 +74,8 @@ Everything except hosting is free.
 1. **Google:** follow [`docs/google-cloud-console.md`](docs/google-cloud-console.md).
 2. **Telegram bot and alerts:** follow [`docs/pharmacy-stock-management.md`](docs/pharmacy-stock-management.md), section 3.
 3. **Stock bot:** follow [`docs/telegram-stock-bot.md`](docs/telegram-stock-bot.md).
-4. **Each new pharmacy:** follow the onboarding checklist in `pharmacy-stock-management.md`, section 5.
+4. **Each new pharmacy:** follow the onboarding checklist in `pharmacy-stock-management.md`, section 5. For scaling, see [`docs/multi-pharmacy-setup.md`](docs/multi-pharmacy-setup.md).
+5. **More than one pharmacy:** read [`docs/multi-pharmacy-setup.md`](docs/multi-pharmacy-setup.md).
 
 Each guide gives two options: **import** the ready workflow, or **build it by hand** node by node using the scripts in `code/`.
 
