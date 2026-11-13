@@ -63,9 +63,9 @@ One spreadsheet per pharmacy, with two tabs. Tab names and headers must match **
 
 **Admin sheet `Clients`** (`templates/clients-template.csv`, one for your whole business)
 
-`ClientName, ChatID, SheetID, Active`
+`ClientName, ChatID, SheetID, Active, Role, Alerts, Phone, PaidUntil, Notes`
 
-- Used by the stock bot. See `telegram-stock-bot.md`.
+- The stock bot uses the first four columns. The rest are your records. See `telegram-stock-bot.md`.
 
 ---
 
@@ -138,7 +138,7 @@ Set it up **once** using `telegram-stock-bot.md`. Clients are added as rows in t
 
 **C. Stock bot access (1 min)**
 
-1. In the **Clients** sheet, add one row per person: `ClientName, ChatID, SheetID, YES`.
+1. In the **Clients** sheet, add one row per person: name, chat ID, sheet ID, `YES`, role (Owner/Staff), alerts (YES for owner), phone, paid-until date and notes.
 2. Each person sends `/help`. They should now see their pharmacy name.
 
 **D. Morning alerts (5 min)**
@@ -152,7 +152,7 @@ Set it up **once** using `telegram-stock-bot.md`. Clients are added as rows in t
 
 1. Enter their real stock. Start with the 50–100 fast-moving medicines. You can photograph invoices or their khata and convert them to CSV.
 2. Ask the owner to set **MinStock** for the fast movers.
-3. Record the client in your own list: name, phone, sheet ID, chat IDs, start date, and paid until.
+3. Keep `PaidUntil` in the Clients sheet up to date. It's your payment record.
 
 ---
 

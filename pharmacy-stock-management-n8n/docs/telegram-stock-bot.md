@@ -55,8 +55,18 @@ Telegram Trigger → Read Clients → Route & Parse → Registered?
 3. Share it with the service account email as **Editor**.
 4. Copy the sheet ID from the URL (between `/d/` and `/edit`).
 
-| ClientName | ChatID | SheetID | Active |
-|---|---|---|---|
+| ClientName | ChatID | SheetID | Active | Role | Alerts | Phone | PaidUntil | Notes |
+|---|---|---|---|---|---|---|---|---|
+| Al Modina Pharmacy | 5820000000 | 1abcDEF... | YES | Owner | YES | 01700000000 | 2026-12-31 | Paid cash |
+| Al Modina Pharmacy | 6110000000 | 1abcDEF... | YES | Staff | NO | 01800000000 | 2026-12-31 | Counter staff |
+
+- **One row per person.** Several staff of the same pharmacy share the same `SheetID`.
+- **Used by the bot:** `ClientName`, `ChatID`, `SheetID`, `Active`. `Active` = `NO` blocks that person, and a blank value counts as active.
+- **Your records only (the bot ignores them):** `Role` (Owner/Staff), `Alerts` (YES/NO, for the future master alert workflow), `Phone`, `PaidUntil` (YYYY-MM-DD), `Notes`.
+- Format the **Phone** column as **Plain text** so the leading 0 stays.
+- **Don't rename or reorder** the first four columns. You can add more columns to the right.
+
+---|---|---|---|
 | Rahim Pharmacy | 5820000000 | 1abcDEF... | YES |
 | Rahim Pharmacy (staff) | 6110000000 | 1abcDEF... | YES |
 
@@ -233,7 +243,7 @@ Each one returns nothing when there's nothing to do, so the Sheets node after it
 
 1. Create their stock sheet from the template and share it with the service account email.
 2. The owner (and any staff) open the bot and send `/start`. The bot replies with their **chat ID**.
-3. Add one row per person to the Clients sheet: `ClientName, ChatID, SheetID, YES`.
+3. Add one row per person to the Clients sheet: name, chat ID, sheet ID, `YES`, role, alerts, phone, paid-until date and notes.
 4. They send `/help` again and now see their pharmacy name.
 
 You don't need to change anything in n8n.
