@@ -1,0 +1,6 @@
+Medicine,Quantity,MinStock,ReorderQty,Supplier,SupplierPhone,ExpiryDate
+Napa 500mg,8,20,50,Beximco Rep,01700000001,2027-06-30
+Seclo 20mg,35,15,30,Square Rep,01700000002,2026-12-01
+Fexo 120mg,4,10,20,Square Rep,01700000002,2027-03-15
+Losectil 20mg,50,20,40,Eskayef Rep,01700000003,2026-11-25
+Ace Plus,12,25,60,Square Rep,01700000002,2027-08-10

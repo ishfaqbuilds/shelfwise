@@ -1,0 +1,183 @@
+{
+  "name": "Pharmacy - Low Stock & Expiry Alerts",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Every Morning 9AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_YOUR_GOOGLE_SHEET_ID_HERE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Stock",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "name": "Read Stock Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== Settings =====\nconst EXPIRY_WARNING_DAYS = 30;\n\nconst today = new Date();\ntoday.setHours(0, 0, 0, 0);\nconst todayStr = today.toISOString().slice(0, 10);\n\n// 12 Nov, 2026\nconst MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];\nconst fmt = (d) => `${d.getDate()} ${MONTHS[d.getMonth()]}, ${d.getFullYear()}`;\n// 25 Nov (used in Expiring Soon)\nconst fmtShort = (d) => `${d.getDate()} ${MONTHS[d.getMonth()]}`;\n// Escape text for Telegram HTML\nconst esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n// Restore the leading 0 that Google Sheets drops (1700000001 -> 01700000001)\nconst fixPhone = (p) => {\n  let s = String(p || '').replace(/\\D/g, '');\n  if (s.length === 10 && s.startsWith('1')) s = '0' + s;\n  if (s.length === 13 && s.startsWith('880')) s = '0' + s.slice(3);\n  return s;\n};\n\nconst low = [];\nconst expiring = [];\n\nfor (const item of $input.all()) {\n  const r = item.json;\n  const name = String(r.Medicine || '').trim();\n  if (!name) continue;\n\n  const qty = Number(r.Quantity) || 0;\n  const min = Number(r.MinStock) || 0;\n\n  // Low stock\n  if (qty <= min) {\n    low.push({\n      Date: todayStr,\n      Medicine: name,\n      Current: qty,\n      MinStock: min,\n      OrderQty: Number(r.ReorderQty) || Math.max(min * 2 - qty, 1),\n      Supplier: String(r.Supplier || 'Unknown supplier').trim(),\n      SupplierPhone: fixPhone(r.SupplierPhone)\n    });\n  }\n\n  // Expiry (ExpiryDate must be YYYY-MM-DD)\n  if (r.ExpiryDate) {\n    const exp = new Date(r.ExpiryDate);\n    if (!isNaN(exp.getTime())) {\n      exp.setHours(0, 0, 0, 0);\n      const days = Math.round((exp - today) / 86400000);\n      if (days <= EXPIRY_WARNING_DAYS) expiring.push({ name, days, exp });\n    }\n  }\n}\n\n// Nothing to report -> stop quietly\nif (!low.length && !expiring.length) return [];\n\nlet msg = `📦 <b>Stock Report (${fmt(today)})</b>\\n`;\n\nif (low.length) {\n  msg += `\\n🔴 <b>Order Today [${low.length}]</b>\\n`;\n  const bySupplier = {};\n  for (const p of low) (bySupplier[p.Supplier] = bySupplier[p.Supplier] || []).push(p);\n  Object.entries(bySupplier).forEach(([supplier, items], i) => {\n    if (i > 0) msg += `\\n`;\n    msg += `<b>Supplier: ${esc(supplier)}</b>\\n`;\n    if (items[0].SupplierPhone) msg += `Sup. Num: ${items[0].SupplierPhone}\\n`;\n    items.forEach((p, j) => {\n      msg += `${j + 1}. ${esc(p.Medicine)}: ${p.Current} left → order ${p.OrderQty}\\n`;\n    });\n  });\n}\n\nif (expiring.length) {\n  expiring.sort((a, b) => a.days - b.days);\n  // Divider only when both sections are shown\n  msg += low.length ? `-------------------------------------\\n` : `\\n`;\n  msg += `⚠️ <b>Expiring Soon [${expiring.length}]</b>\\n`;\n  expiring.forEach((e, k) => {\n    let when;\n    if (e.days < 0) when = `EXPIRED ${-e.days} days ago (${fmtShort(e.exp)})`;\n    else if (e.days === 0) when = `expires today (${fmtShort(e.exp)})`;\n    else when = `${e.days} days (${fmtShort(e.exp)})`;\n    msg += `${k + 1}. ${esc(e.name)}: ${when}\\n`;\n  });\n}\n\n// Telegram limit: 4096 characters\nif (msg.length > 4000) msg = msg.slice(0, 3950) + '\\n…list cut off, see Purchase List sheet';\n\nreturn [{ json: { message: msg, purchaseList: low } }];\n"
+      },
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "name": "Analyze Stock & Build Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "PASTE_OWNER_TELEGRAM_CHAT_ID",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "a1b2c3d4-0004-4000-8000-000000000004",
+      "name": "Send Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Turn the purchase list into one item per medicine\nconst list = $input.first().json.purchaseList || [];\nreturn list.map(p => ({ json: p }));"
+      },
+      "id": "a1b2c3d4-0005-4000-8000-000000000005",
+      "name": "Split Purchase List",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_YOUR_GOOGLE_SHEET_ID_HERE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Purchase List",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "a1b2c3d4-0006-4000-8000-000000000006",
+      "name": "Save to Purchase List Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        900,
+        120
+      ]
+    }
+  ],
+  "connections": {
+    "Every Morning 9AM": {
+      "main": [
+        [
+          {
+            "node": "Read Stock Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Stock Sheet": {
+      "main": [
+        [
+          {
+            "node": "Analyze Stock & Build Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Stock & Build Report": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Alert",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Purchase List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Purchase List": {
+      "main": [
+        [
+          {
+            "node": "Save to Purchase List Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Dhaka"
+  },
+  "pinData": {}
+}

@@ -1,0 +1,1 @@
+return ($input.first().json.deletes || []).map(d => ({ json: d }));
