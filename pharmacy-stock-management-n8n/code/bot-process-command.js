@@ -45,8 +45,8 @@ const parseItems = (s) => s.split(/[,\n]+/).map(x => x.trim()).filter(Boolean).m
 // One clear match, or an explanation why not
 const pick = (q) => {
   const m = find(q);
-  if (m.length === 0) return { err: `❌ Not found: ${esc(q)}` };
-  if (m.length > 1) return { err: `⚠️ "${esc(q)}" matches: ${m.slice(0, 5).map(x => esc(x.name)).join(', ')}. Be more specific.` };
+  if (m.length === 0) return { err: `❌ Not Found: ${esc(q)}` };
+  if (m.length > 1) return { err: `⚠️ "${esc(q)}" Matches: ${m.slice(0, 5).map(x => esc(x.name)).join(', ')}. Be More Specific.` };
   return { item: m[0] };
 };
 
@@ -64,8 +64,8 @@ const pickSupplier = (q) => {
   const n = String(q).toLowerCase().trim();
   let m = names.filter(x => x.toLowerCase() === n);
   if (!m.length) m = names.filter(x => x.toLowerCase().includes(n));
-  if (m.length === 0) return { err: `❌ No supplier named: ${esc(q)}. See /suppliers` };
-  if (m.length > 1) return { err: `⚠️ "${esc(q)}" matches: ${m.slice(0, 5).map(esc).join(', ')}. Be more specific.` };
+  if (m.length === 0) return { err: `❌ No Supplier Named: ${esc(q)}. See /suppliers` };
+  if (m.length > 1) return { err: `⚠️ "${esc(q)}" Matches: ${m.slice(0, 5).map(esc).join(', ')}. Be More Specific.` };
   return { name: m[0] };
 };
 
@@ -105,16 +105,16 @@ switch (cmd) {
 
   case '/stock': {
     if (!rest) {
-      if (!stock.length) { reply = 'Stock list is empty. Add items with /new'; break; }
+      if (!stock.length) { reply = 'Stock List Is Empty. Add Items With /new'; break; }
       const sorted = [...stock].sort((a, b) => a.name.localeCompare(b.name));
       const lines = sorted.slice(0, 100).map((s, i) => `${i + 1}. ${esc(s.name)}: ${s.qty}${s.qty <= s.min ? ' 🔴' : ''}`);
       reply = `📦 <b>All Stock [${stock.length}]</b>\n${lines.join('\n')}`;
-      if (stock.length > 100) reply += `\n…and ${stock.length - 100} more. Search with /stock name`;
+      if (stock.length > 100) reply += `\n…And ${stock.length - 100} More. Search With /stock name`;
     } else {
       const m = find(rest);
       reply = m.length
-        ? m.slice(0, 15).map(s => `${s.qty <= s.min ? '🔴' : '🟢'} <b>${esc(s.name)}</b>: ${s.qty} left (min ${s.min}, reorder ${s.reorder || 'auto'})`).join('\n')
-        : `❌ Not found: ${esc(rest)}`;
+        ? m.slice(0, 15).map(s => `${s.qty <= s.min ? '🔴' : '🟢'} <b>${esc(s.name)}</b>: ${s.qty} Left (Min ${s.min}, Reorder ${s.reorder || 'Auto'})`).join('\n')
+        : `❌ Not Found: ${esc(rest)}`;
     }
     break;
   }
@@ -125,20 +125,20 @@ switch (cmd) {
     if (!items.length) { reply = `Usage: ${cmd} napa 10, seclo 5`; break; }
     const lines = [];
     for (const it of items) {
-      if (isNaN(it.n) || it.n <= 0) { lines.push(`❓ Couldn't read: ${esc(it.raw)} (format: name qty)`); continue; }
+      if (isNaN(it.n) || it.n <= 0) { lines.push(`❓ Couldn't Read: ${esc(it.raw)} (Format: name qty)`); continue; }
       const p = pick(it.q);
       if (p.err) { lines.push(p.err); continue; }
       const s = p.item;
       const old = s.qty;
       let warn = '';
       if (cmd === '/sold') {
-        if (it.n > old) { s.qty = 0; warn = ` (only had ${old})`; }
+        if (it.n > old) { s.qty = 0; warn = ` (Only Had ${old})`; }
         else s.qty = old - it.n;
       } else {
         s.qty = old + it.n;
       }
       updates[s.name] = { ...(updates[s.name] || { Medicine: s.name }), Quantity: s.qty };
-      lines.push(`✅ ${esc(s.name)}: ${old} → ${s.qty}${warn}${s.qty <= s.min ? ' 🔴 low' : ''}`);
+      lines.push(`✅ ${esc(s.name)}: ${old} → ${s.qty}${warn}${s.qty <= s.min ? ' 🔴 Low' : ''}`);
     }
     reply = `${cmd === '/sold' ? '🧾 <b>Sold</b>' : '📥 <b>Received</b>'}\n${lines.join('\n')}`;
     break;
@@ -149,34 +149,34 @@ switch (cmd) {
     if (!items.length) { reply = 'Usage: /setmin napa 30'; break; }
     const lines = [];
     for (const it of items) {
-      if (isNaN(it.n) || it.n < 0) { lines.push(`❓ Couldn't read: ${esc(it.raw)}`); continue; }
+      if (isNaN(it.n) || it.n < 0) { lines.push(`❓ Couldn't Read: ${esc(it.raw)}`); continue; }
       const p = pick(it.q);
       if (p.err) { lines.push(p.err); continue; }
       const s = p.item;
       const old = s.min;
       s.min = it.n;
       updates[s.name] = { ...(updates[s.name] || { Medicine: s.name }), MinStock: s.min };
-      lines.push(`✅ ${esc(s.name)}: min ${old} → ${s.min}`);
+      lines.push(`✅ ${esc(s.name)}: Min ${old} → ${s.min}`);
     }
-    reply = `⚙️ <b>Minimum stock</b>\n${lines.join('\n')}`;
+    reply = `⚙️ <b>Minimum Stock</b>\n${lines.join('\n')}`;
     break;
   }
 
   case '/setreorder': {
     const items = parseItems(rest);
-    if (!items.length) { reply = 'Usage: /setreorder napa 50  (0 = automatic)'; break; }
+    if (!items.length) { reply = 'Usage: /setreorder napa 50  (0 = Automatic)'; break; }
     const lines = [];
     for (const it of items) {
-      if (isNaN(it.n) || it.n < 0) { lines.push(`❓ Couldn't read: ${esc(it.raw)}`); continue; }
+      if (isNaN(it.n) || it.n < 0) { lines.push(`❓ Couldn't Read: ${esc(it.raw)}`); continue; }
       const p = pick(it.q);
       if (p.err) { lines.push(p.err); continue; }
       const s = p.item;
-      const old = s.reorder || 'auto';
+      const old = s.reorder || 'Auto';
       s.reorder = it.n;
       updates[s.name] = { ...(updates[s.name] || { Medicine: s.name }), ReorderQty: it.n === 0 ? '' : it.n };
-      lines.push(`✅ ${esc(s.name)}: reorder ${old} → ${it.n === 0 ? 'auto' : it.n}`);
+      lines.push(`✅ ${esc(s.name)}: Reorder ${old} → ${it.n === 0 ? 'Auto' : it.n}`);
     }
-    reply = `🛒 <b>Reorder quantity</b>\n${lines.join('\n')}`;
+    reply = `🛒 <b>Reorder Quantity</b>\n${lines.join('\n')}`;
     break;
   }
 
@@ -193,20 +193,20 @@ switch (cmd) {
           `${i + 1}. <b>${esc(n)}</b>\nItems: ${map[n].count}` +
           (map[n].phone ? `\nSup. Num: ${map[n].phone}` : '')
         ).join('\n\n')
-      : 'No suppliers saved yet.';
+      : 'No Suppliers Saved Yet.';
     break;
   }
 
   case '/setsupplier': {
     const [q, supplier, phone] = rest.split('|').map(x => x.trim());
-    if (!q || !supplier) { reply = 'Usage:\n/setsupplier napa | Square Rep | 01700000002\n(phone is optional)'; break; }
+    if (!q || !supplier) { reply = 'Usage:\n/setsupplier napa | Square Rep | 01700000002\n(Phone Is Optional)'; break; }
     const p = pick(q);
     if (p.err) { reply = p.err; break; }
     const s = p.item;
     // Reuse the saved number if this supplier already exists and no phone was given
     const known = stock.find(x => x.supplier.toLowerCase() === supplier.toLowerCase() && x.phone);
     const newPhone = phone ? cleanPhone(phone) : (known ? cleanPhone(known.phone) : cleanPhone(s.phone));
-    const old = s.supplier || 'none';
+    const old = s.supplier || 'None';
     s.supplier = supplier; s.phone = newPhone;
     updates[s.name] = { ...(updates[s.name] || { Medicine: s.name }), Supplier: supplier, SupplierPhone: newPhone };
     reply = `✅ <b>${esc(s.name)}</b>\nSupplier: ${esc(old)} → ${esc(supplier)}${newPhone ? `\nSup. Num: ${newPhone}` : ''}`;
@@ -217,7 +217,7 @@ switch (cmd) {
     const [q, phone] = rest.split('|').map(x => x.trim());
     if (!q || !phone) { reply = 'Usage:\n/supplierphone Square Rep | 01700000002'; break; }
     const newPhone = cleanPhone(phone);
-    if (newPhone.length < 6) { reply = '⚠️ That number looks wrong. Example: 01700000002'; break; }
+    if (newPhone.length < 6) { reply = '⚠️ That Number Looks Wrong. Example: 01700000002'; break; }
     const sp = pickSupplier(q);
     if (sp.err) { reply = sp.err; break; }
     const items = stock.filter(x => x.supplier === sp.name);
@@ -225,7 +225,7 @@ switch (cmd) {
       s.phone = newPhone;
       updates[s.name] = { ...(updates[s.name] || { Medicine: s.name }), SupplierPhone: newPhone };
     }
-    reply = `✅ <b>${esc(sp.name)}</b>\nSup. Num: ${newPhone}\nUpdated on ${items.length} item${items.length === 1 ? '' : 's'}`;
+    reply = `✅ <b>${esc(sp.name)}</b>\nSup. Num: ${newPhone}\nUpdated On ${items.length} Item${items.length === 1 ? '' : 's'}`;
     break;
   }
 
@@ -239,7 +239,7 @@ switch (cmd) {
       s.supplier = newName;
       updates[s.name] = { ...(updates[s.name] || { Medicine: s.name }), Supplier: newName };
     }
-    reply = `✅ Supplier renamed\n${esc(sp.name)} → <b>${esc(newName)}</b>\nUpdated on ${items.length} item${items.length === 1 ? '' : 's'}`;
+    reply = `✅ Supplier Renamed\n${esc(sp.name)} → <b>${esc(newName)}</b>\nUpdated On ${items.length} Item${items.length === 1 ? '' : 's'}`;
     break;
   }
 
@@ -247,19 +247,19 @@ switch (cmd) {
     const f = rest.split('|').map(x => x.trim());
     const [name, qty, min, supplier = '', phone = '', expiry = '', reorder = ''] = f;
     if (!name || qty === undefined || min === undefined || isNaN(Number(qty)) || isNaN(Number(min))) {
-      reply = 'Usage:\n/new Name | Qty | Min | Supplier | Phone | Expiry | Reorder\nOnly Name, Qty and Min are required.\nExample:\n/new Napa 500mg | 100 | 20 | Beximco Rep | 01700000001 | 2027-06-30 | 50';
+      reply = 'Usage:\n/new Name | Qty | Min | Supplier | Phone | Expiry | Reorder\nOnly Name, Qty And Min Are Required.\nExample:\n/new Napa 500mg | 100 | 20 | Beximco Rep | 01700000001 | 2027-06-30 | 50';
       break;
     }
     if (stock.some(s => s.name.toLowerCase() === name.toLowerCase())) {
-      reply = `⚠️ ${esc(name)} already exists. Use /received to add stock.`;
+      reply = `⚠️ ${esc(name)} Already Exists. Use /received To Add Stock.`;
       break;
     }
     if (reorder && isNaN(Number(reorder))) {
-      reply = '⚠️ Reorder must be a number, e.g. 50';
+      reply = '⚠️ Reorder Must Be A Number, e.g. 50';
       break;
     }
     if (expiry && !/^\d{4}-\d{2}-\d{2}$/.test(expiry)) {
-      reply = '⚠️ Expiry must be YYYY-MM-DD, e.g. 2027-06-30';
+      reply = '⚠️ Expiry Must Be YYYY-MM-DD, e.g. 2027-06-30';
       break;
     }
     appends.push({
@@ -271,7 +271,7 @@ switch (cmd) {
       SupplierPhone: phone,
       ExpiryDate: expiry
     });
-    reply = `✅ Added <b>${esc(name)}</b>: ${Number(qty)} in stock (min ${Number(min)}, reorder ${reorder ? Number(reorder) : 'auto'})`;
+    reply = `✅ Added <b>${esc(name)}</b>: ${Number(qty)} In Stock (Min ${Number(min)}, Reorder ${reorder ? Number(reorder) : 'Auto'})`;
     break;
   }
 
@@ -283,7 +283,7 @@ switch (cmd) {
     if (p.err) { reply = p.err; break; }
     const s = p.item;
     if (!confirm) {
-      reply = `Delete <b>${esc(s.name)}</b> (${s.qty} in stock)?\nTo confirm, send:\n/delete ${esc(s.name)} YES`;
+      reply = `Delete <b>${esc(s.name)}</b> (${s.qty} In Stock)?\nTo Confirm, Send:\n/delete ${esc(s.name)} YES`;
     } else {
       deletes.push({ row_number: s.row });
       reply = `🗑 Deleted <b>${esc(s.name)}</b>`;
@@ -305,22 +305,22 @@ switch (cmd) {
     }
     exp.sort((a, b) => a.days - b.days);
     reply = `📦 <b>Stock Report (${fmt(today)})</b>\n`;
-    if (!low.length && !exp.length) { reply += '\n✅ Nothing low or expiring.'; break; }
+    if (!low.length && !exp.length) { reply += '\n✅ Nothing Low Or Expiring.'; break; }
     if (low.length) {
       reply += `\n🔴 <b>Low Stock [${low.length}]</b>\n` +
-        low.map((s, i) => `${i + 1}. ${esc(s.name)}: ${s.qty} left (min ${s.min})`).join('\n') + '\n';
+        low.map((s, i) => `${i + 1}. ${esc(s.name)}: ${s.qty} Left (Min ${s.min})`).join('\n') + '\n';
     }
     if (exp.length) {
       reply += `\n⚠️ <b>Expiring Soon [${exp.length}]</b>\n` +
-        exp.map((e, i) => `${i + 1}. ${esc(e.name)}: ${e.days < 0 ? `EXPIRED ${-e.days} days ago` : e.days === 0 ? 'expires today' : `${e.days} days`} (${fmtShort(e.d)})`).join('\n');
+        exp.map((e, i) => `${i + 1}. ${esc(e.name)}: ${e.days < 0 ? `EXPIRED ${-e.days} Days Ago` : e.days === 0 ? 'Expires Today' : `${e.days} Days`} (${fmtShort(e.d)})`).join('\n');
     }
     break;
   }
 
   default:
-    reply = `🤔 I didn't understand that. Send /help for commands.`;
+    reply = `🤔 I Didn't Understand That. Send /help For Commands.`;
 }
 
-if (reply.length > 4000) reply = reply.slice(0, 3950) + '\n…cut off';
+if (reply.length > 4000) reply = reply.slice(0, 3950) + '\n…Cut Off';
 
 return [{ json: { chatId, reply, updates: Object.values(updates), appends, deletes } }];
