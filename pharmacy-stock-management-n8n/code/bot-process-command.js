@@ -70,20 +70,26 @@ const pickSupplier = (q) => {
 };
 
 const HELP =
-`📋 <b>Commands</b>
-/stock napa — check one medicine
-/stock — list all
-/sold napa 10, seclo 5 — record sales
-/received napa 50 — record a delivery
-/setmin napa 30 — change minimum stock
-/setreorder napa 50 — change order quantity (0 = auto)
-/new Name | Qty | Min | Supplier | Phone | Expiry | Reorder
-/suppliers — list suppliers and numbers
-/setsupplier napa | Square Rep | 017... — change a medicine's supplier
-/supplierphone Square Rep | 017... — change number (all their items)
-/renamesupplier Old Name | New Name — rename everywhere
-/delete napa — remove a medicine
-/report — low stock &amp; expiry now`;
+`📋 <b>Stock</b>
+/stock → List All Medicines
+/stock napa → Check One
+/sold napa 10 → Record A Sale
+/received napa 50 → Add Stock
+/report → Low Stock &amp; Expiry
+
+⚙️ <b>Settings</b>
+/setmin napa 30 → Min Stock
+/setreorder napa 50 → Order Qty
+/new → Add A Medicine
+/delete napa → Remove One
+
+🏢 <b>Suppliers</b>
+/suppliers → List Suppliers
+/setsupplier → Change Supplier
+/supplierphone → Change Number
+/renamesupplier → Rename One
+
+💡 Send A Command Alone To See Its Format.`;
 
 const firstSpace = text.search(/\s/);
 const cmd = (firstSpace === -1 ? text : text.slice(0, firstSpace)).toLowerCase().replace(/@.*$/, '');
@@ -184,7 +190,7 @@ switch (cmd) {
     const names = Object.keys(map).sort((a, b) => a.localeCompare(b));
     reply = names.length
       ? `🏢 <b>Suppliers [${names.length}]</b>\n\n` + names.map((n, i) =>
-          `${i + 1}. <b>${esc(n)}</b> (Items: ${map[n].count})` +
+          `${i + 1}. <b>${esc(n)}</b>\nItems: ${map[n].count}` +
           (map[n].phone ? `\nSup. Num: ${map[n].phone}` : '')
         ).join('\n\n')
       : 'No suppliers saved yet.';
