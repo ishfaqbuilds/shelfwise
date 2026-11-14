@@ -183,7 +183,10 @@ switch (cmd) {
     }
     const names = Object.keys(map).sort((a, b) => a.localeCompare(b));
     reply = names.length
-      ? `🏢 <b>Suppliers [${names.length}]</b>\n` + names.map((n, i) => `${i + 1}. ${esc(n)}${map[n].phone ? ' -&gt; ' + map[n].phone : ''}`).join('\n')
+      ? `🏢 <b>Suppliers [${names.length}]</b>\n\n` + names.map((n, i) =>
+          `${i + 1}. <b>${esc(n)}</b> (Items: ${map[n].count})` +
+          (map[n].phone ? `\nSup. Num: ${map[n].phone}` : '')
+        ).join('\n\n')
       : 'No suppliers saved yet.';
     break;
   }
