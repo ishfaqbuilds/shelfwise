@@ -13,7 +13,7 @@ if (!client || !String(client.SheetID || '').trim()) {
   return [{ json: {
     registered: false,
     chatId,
-    reply: `👋 This bot is for registered pharmacies only.\n\nYour chat ID: <code>${chatId}</code>\nSend this number to your service provider to get access.`
+    reply: `👋 This Is A Private Assistant For Registered Shops Only.\n\nYour chat ID: <code>${chatId}</code>\nSend this number to Ishfaq Builds to get access.`
   } }];
 }
 
