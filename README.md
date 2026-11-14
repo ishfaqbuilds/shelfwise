@@ -1,6 +1,6 @@
-# Pharmacy Stock Management Workflow (n8n)
+# ShelfWise: Pharmacy Stock Management Workflow (n8n)
 
-Stock management for small pharmacies using **n8n**, **Google Sheets** and **Telegram**. There's nothing to install for the pharmacy: they use a Google Sheet and a Telegram chat.
+**Never run out, never sell expired.** Stock management for small pharmacies and shops using **n8n**, **Google Sheets** and **Telegram**. There's nothing to install for the shop: they use a Google Sheet and a Telegram chat.
 
 ## Features
 
@@ -18,6 +18,7 @@ Stock management for small pharmacies using **n8n**, **Google Sheets** and **Tel
 - They can check stock, add or delete medicines, and set minimum and reorder amounts.
 - They can manage suppliers and their phone numbers.
 - Partial names work (`napa` finds `Napa 500mg`), and the bot asks when a name is ambiguous.
+- Sending a command alone (`/new`, `/setsupplier`…) replies with its format and an example.
 - Only registered users can edit. Each person is mapped to their pharmacy's sheet.
 
 ## How it works
@@ -74,10 +75,12 @@ Everything except hosting is free.
 1. **Google:** follow [`docs/google-cloud-console.md`](docs/google-cloud-console.md).
 2. **Telegram bot and alerts:** follow [`docs/pharmacy-stock-management.md`](docs/pharmacy-stock-management.md), section 3.
 3. **Stock bot:** follow [`docs/telegram-stock-bot.md`](docs/telegram-stock-bot.md).
-4. **Each new pharmacy:** follow the onboarding checklist in `pharmacy-stock-management.md`, section 5. For scaling, see [`docs/multi-pharmacy-setup.md`](docs/multi-pharmacy-setup.md).
+4. **Each new pharmacy:** follow the onboarding checklist in `pharmacy-stock-management.md`, section 5.
 5. **More than one pharmacy:** read [`docs/multi-pharmacy-setup.md`](docs/multi-pharmacy-setup.md).
 
 Each guide gives two options: **import** the ready workflow, or **build it by hand** node by node using the scripts in `code/`.
+
+**Don't import `pharmacy-stock-bot.json` twice.** One Telegram bot can only feed one workflow. A second copy takes the bot over from the first.
 
 **Source of truth:** the workflow JSON files. The `code/` scripts are copies of the Code nodes. If you change code in n8n, re-export the workflow and update the matching file in `code/`.
 
@@ -106,6 +109,8 @@ This repository contains **no credentials**. The workflows use placeholders: `PA
 - [x] Daily low-stock and expiry alerts
 - [x] Telegram stock management bot
 - [ ] Master alert workflow driven by the Clients sheet (one workflow instead of one per pharmacy)
+- [ ] Faster input for busy counters: a photo of the day's ledger page, read by AI, confirmed with one tap
+- [ ] Change log (who changed what) and staff permissions (block `/delete` for staff)
 - [ ] WhatsApp alerts
 - [ ] Sales history log
 
