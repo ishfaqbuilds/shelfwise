@@ -74,7 +74,7 @@ One spreadsheet per pharmacy, with two tabs. Tab names and headers must match **
 ### 3.1 Create the Telegram bot
 
 1. Open **@BotFather** (blue tick), tap **Start**, and send `/newbot`.
-2. Enter the display name (for example `Pharmacy Stock Alerts`) and a username ending in `bot`.
+2. Enter the display name (for example `ShelfWise`) and a username ending in `bot`. Pick the username carefully: it's hard to change, and every client's `t.me/…` link depends on it. Avoid numbers like `builds7_bot`.
 3. Copy the **token**. It goes **only** into n8n, never into chat or GitHub.
 4. In n8n, go to **Credentials → Create credential → Telegram API**, paste the token, and click **Save**.
 
@@ -173,18 +173,31 @@ Set it up **once** using `telegram-stock-bot.md`. Clients are added as rows in t
 | Change display name | `/setname` |
 | Profile photo | `/setuserpic` |
 | Description / About | `/setdescription`, `/setabouttext` |
-| Show the command menu in Telegram | `/setcommands` → paste lines like `sold - record sales` |
+| Show the command menu in Telegram | `/setcommands` → paste the list below |
 | List bots | `/mybots` |
+
+**Command menu list** (for `/setcommands`):
+
+```
+stock - Check stock
+sold - Record sales
+received - Record a delivery
+report - Low stock and expiry now
+suppliers - List suppliers
+help - All commands
+```
 
 ### Deleting or replacing the bot
 
 **Deleting the bot stops alerts and the stock bot for every client.** To replace it safely:
 
-1. Create the new bot (3.1) and add its credential in n8n.
-2. Every client and staff member sends `/start` to the new bot.
-3. Switch every Telegram node in **all** workflows to the new credential.
-4. Check the chat IDs. They usually stay the same for private chats.
-5. Then send `/deletebot` to BotFather, pick the old bot, and type the confirmation sentence exactly as shown.
+1. Create the new bot (3.1) and set its name, description, about text, picture and command menu.
+2. **Every client and staff member taps Start on the new bot first.** If you switch before they do, their alerts fail with `chat not found`.
+3. In n8n, go to **Overview → Credentials**, open the existing **Telegram** credential, paste the **new token** and click **Save**. Every Telegram node in both workflows uses this one credential, so nothing else changes.
+4. Open the **Telegram Stock Bot** workflow and click **Unpublish → Publish**, so Telegram sends messages to the new bot's webhook.
+5. Test: send `/help` to the new bot, and run one alert workflow with **Execute**.
+6. Chat IDs stay the same, so the Clients sheet and alert workflows need no changes.
+7. Wait a day, then send `/deletebot` to BotFather, pick the old bot, and type the confirmation sentence exactly as shown.
 
 ---
 

@@ -138,8 +138,9 @@ The importable master workflow is on the roadmap. It will be built when you reac
 
 | Limit | Value | When it matters |
 |---|---|---|
-| Google Sheets API reads | about 300 per minute per project | Each bot message uses about 2 reads and each alert run uses 1. [Likely] Fine for 50+ pharmacies |
+| Google Sheets API requests | [Likely] about 60 reads and 60 writes per minute for the service account, since it counts as one user | Each bot message uses about 2 reads. All alerts fire in the same minute, so at about 25 or more pharmacies, stagger alert times (9:00, 9:01…) or add a short wait in the master loop |
 | Telegram sending | about 30 messages per second per bot | Not an issue at this scale |
+| One bot for everyone | One webhook per bot | Never duplicate the bot workflow. Branded per-client bots need a small trigger-only workflow each, passing messages to the shared logic, and should be a paid tier |
 | One sheet per pharmacy | Google Sheets handles 10,000+ rows easily | Purchase List grows daily; archive yearly |
 | Your VPS | A small Hostinger VPS runs both workflows easily | Watch memory if you add many more workflows |
 | **Your time** | Data entry plus support for each pharmacy | **The real limit.** Charge a setup fee |

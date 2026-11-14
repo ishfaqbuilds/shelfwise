@@ -34,7 +34,7 @@ Telegram Trigger → Read Clients → Route & Parse → Registered?
 1. **Telegram Trigger** receives every message sent to the bot.
 2. **Read Clients** loads the Clients sheet.
 3. **Route & Parse** finds the sender's chat ID in that sheet and gets their pharmacy's sheet ID.
-4. **Registered?** passes unknown senders to a reply that shows them their chat ID.
+4. **Registered?** passes unknown senders to a reply that shows them their chat ID ("This Is A Private Assistant For Registered Shops Only…").
 5. **Read Stock** loads that pharmacy's Stock tab.
 6. **Process Command** works out what to change and writes the reply text.
 7. **The three Split nodes** turn the changes into rows, and the Sheets nodes write them.
@@ -65,13 +65,6 @@ Telegram Trigger → Read Clients → Route & Parse → Registered?
 - **Your records only (the bot ignores them):** `Role` (Owner/Staff), `Alerts` (YES/NO, for the future master alert workflow), `Phone`, `PaidUntil` (YYYY-MM-DD), `Notes`.
 - Format the **Phone** column as **Plain text** so the leading 0 stays.
 - **Don't rename or reorder** the first four columns. You can add more columns to the right.
-
----|---|---|---|
-| Rahim Pharmacy | 5820000000 | 1abcDEF... | YES |
-| Rahim Pharmacy (staff) | 6110000000 | 1abcDEF... | YES |
-
-- **One row per person.** Several staff of the same pharmacy share the same `SheetID`.
-- **`Active` = `NO`** blocks that person. A blank value counts as active.
 
 ---
 
@@ -215,7 +208,7 @@ Each one returns nothing when there's nothing to do, so the Sheets node after it
 
 | Command | What it does |
 |---|---|
-| `/help` or `/start` | Shows the command list |
+| `/help` or `/start` | Shows the command list, grouped into Stock, Settings and Suppliers |
 | `/stock napa` | Shows quantity, minimum and reorder amount |
 | `/stock` | Lists all medicines (🔴 = low) |
 | `/sold napa 10, seclo 5` | Subtracts stock. Several items are allowed, separated by commas or new lines |
@@ -234,7 +227,10 @@ Each one returns nothing when there's nothing to do, so the Sheets node after it
 **How it behaves:**
 
 - **Partial names work:** `napa` finds `Napa 500mg`. If the name matches several medicines, the bot lists them and asks you to be more specific.
-- **Selling more than you have** sets the stock to 0 and the reply notes "only had X".
+- **Selling more than you have** sets the stock to 0 and the reply notes "Only Had X".
+- **Sending a command alone** (`/new`, `/setsupplier`, `/supplierphone`, `/renamesupplier`) replies with its full format and an example.
+- **Reply style:** descriptions are in Title Case, while commands and their examples stay lowercase so Telegram keeps them tappable.
+- **To change wording:** the unregistered reply lives in `code/bot-route-and-parse.js`. Every other reply, including `/help`, lives in `code/bot-process-command.js`.
 - **Unregistered senders** get a reply with their chat ID, which makes onboarding easy.
 
 ---
@@ -269,9 +265,11 @@ When importing a CSV, untick **"Convert text to numbers, dates, and formulas"** 
 | No reply, but there is an execution | A sheet node failed before Send Reply | Open the execution and click the red node |
 | `columns.matchingColumns is required` | Column to match on is missing | Use the Fixed-then-Expression trick in 4.11 |
 | `Parameter "Sheet" is required` | The Sheet field was cleared | Set it to By Name: `Stock` |
-| "This bot is for registered pharmacies only" | Chat ID isn't in the Clients sheet, or Active is NO | Add or fix their row |
-| "Not found" | The name doesn't match | Check with `/stock` and use part of the exact name |
-| "matches: A, B…" | The name matches several medicines | Type more of the name |
+| "This Is A Private Assistant For Registered Shops Only" | Chat ID isn't in the Clients sheet, or Active is NO | Add or fix their row |
+| "Not Found" | The name doesn't match | Check with `/stock` and use part of the exact name |
+| "Matches: A, B…" | The name matches several medicines | Type more of the name |
 | Leading 0 missing in the sheet | Number formatting | See section 8 |
+
+| A second copy of this workflow was imported | Two Telegram Triggers fight over one bot | Delete the extra copy, then **Unpublish → Publish** the real one |
 
 **No reply means nothing was saved.** Tell staff: try again, or contact you.
