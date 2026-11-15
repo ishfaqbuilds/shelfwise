@@ -18,13 +18,9 @@
 
 ## How It Works
 
-```
-ALERTS (Per Shop)
-9AM → Read Stock → Analyze → Telegram Alert + Purchase List
+**📦 Daily Alerts:** 9AM → Read Stock → Telegram Report + Purchase List
 
-BOT (All Shops)
-Telegram → Read Clients → Find Shop → Read Stock → Run Command → Update Sheet + Reply
-```
+**💬 Stock Bot:** Command → Find Shop → Update Stock → Reply
 
 ## Screenshots
 
@@ -99,15 +95,21 @@ Telegram → Read Clients → Find Shop → Read Stock → Run Command → Updat
 
 ## Bot Commands
 
-| Command | Action |
-|---|---|
-| `/stock` · `/stock napa` | List All · Check One |
-| `/sold napa 10` | Record Sale |
-| `/received napa 50` | Add Stock |
-| `/report` | Low Stock & Expiry |
-| `/setmin` · `/setreorder` | Min Stock · Order Qty |
-| `/new` · `/delete` | Add · Remove Medicine |
-| `/suppliers` · `/setsupplier` · `/supplierphone` · `/renamesupplier` | Manage Suppliers |
+| | Command | Action |
+|:---:|---|---|
+| 📋 | `/stock` | List All Medicines |
+| 📋 | `/stock napa` | Check One |
+| 📋 | `/sold napa 10` | Record A Sale |
+| 📋 | `/received napa 50` | Add Stock |
+| 📋 | `/report` | Low Stock & Expiry |
+| ⚙️ | `/setmin napa 30` | Min Stock |
+| ⚙️ | `/setreorder napa 50` | Order Qty |
+| ⚙️ | `/new` | Add A Medicine |
+| ⚙️ | `/delete napa` | Remove One |
+| 🏢 | `/suppliers` | List Suppliers |
+| 🏢 | `/setsupplier` | Change Supplier |
+| 🏢 | `/supplierphone` | Change Number |
+| 🏢 | `/renamesupplier` | Rename One |
 
 ## Security
 
