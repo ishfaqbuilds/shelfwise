@@ -1,65 +1,58 @@
-# ShelfWise: Pharmacy Stock Management Workflow (n8n)
+# ShelfWise: Pharmacy Stock Management (n8n)
 
-**Never Run Out, Never Sell Expired.** Stock management for small pharmacies and shops using **n8n**, **Google Sheets** and **Telegram**. There's nothing to install for the shop: they use a Google Sheet and a Telegram chat.
+**Never Run Out, Never Sell Expired.** Stock management for small pharmacies and shops using n8n, Google Sheets and Telegram. There's nothing to install for the shop: they use a Google Sheet and a Telegram chat.
 
 ## Features
 
-**📦 Daily Stock Alerts** (One Workflow Per Pharmacy)
+**📦 Daily Stock Alerts**
+- 9AM Telegram report
+- Low stock, grouped by supplier, with order quantities
+- Expiring and expired items
+- Auto purchase list in Google Sheets
 
-- Sends one Telegram message every morning at 9AM.
-- Lists medicines at or below minimum stock, grouped by supplier, with the supplier's number and how many to order.
-- Lists medicines expiring within 30 days, or already expired.
-- Writes a dated purchase list back to Google Sheets.
-- Stays silent when nothing needs attention.
-
-**💬 Telegram Stock Bot** (One Workflow For All Pharmacies)
-
-- Staff update stock by chat: `/sold napa 10, seclo 5` or `/received napa 50`.
-- They can check stock, add or delete medicines, and set minimum and reorder amounts.
-- They can manage suppliers and their phone numbers.
-- Partial names work (`napa` finds `Napa 500mg`), and the bot asks when a name is ambiguous.
-- Sending a command alone (`/new`, `/setsupplier`…) replies with its format and an example.
-- Only registered users can edit. Each person is mapped to their pharmacy's sheet.
+**💬 Telegram Stock Bot**
+- Update stock by chat: `/sold napa 10`, `/received napa 50`
+- Manage medicines and suppliers
+- Partial name search
+- One bot for all shops
 
 ## How It Works
 
 ```
-STOCK ALERTS (Per Pharmacy)
-Every Morning 9AM → Read Stock Sheet → Analyze Stock & Build Report
-                                          ├→ Send Telegram Alert
-                                          └→ Split Purchase List → Save to Purchase List Sheet
+ALERTS (Per Shop)
+9AM → Read Stock → Analyze → Telegram Alert + Purchase List
 
-TELEGRAM STOCK BOT (All Pharmacies)
-Telegram Trigger → Read Clients → Route & Parse → Registered?
-                                                    ├ true  → Read Stock → Process Command → Update / Add / Delete rows + Send Reply
-                                                    └ false → Reply: Not Registered (shows the sender's chat ID)
+BOT (All Shops)
+Telegram → Read Clients → Find Shop → Read Stock → Run Command → Update Sheet + Reply
 ```
 
 ## Screenshots
 
-**Daily 9AM Report**: items to reorder, grouped by supplier with contact numbers and order quantities, plus expiry warnings.
+### Telegram Bot
 
-![Daily stock report](screenshots/daily-report.png)
+| Daily 9AM Report | Updating Stock By Chat | Command List |
+|:---:|:---:|:---:|
+| <img src="screenshots/daily-report.png" alt="Daily stock report" height="260"> | <img src="screenshots/sold-reply.png" alt="Sale recorded in Telegram" height="260"> | <img src="screenshots/help-command.png" alt="Bot commands" height="260"> |
 
-**Updating Stock By Chat**: a sale recorded with `/sold`, with the new count and a low-stock flag.
+<br>
 
-![Sale recorded in Telegram](screenshots/sold-reply.png)
-
-**Command List**: what staff see when they send `/help`.
-
-![Bot commands](screenshots/help-command.png)
-
-**Google Sheets As The Database**: the stock tab (left) and the dated purchase list the workflow writes (right).
+### Google Sheets
 
 | Stock | Purchase List |
-|---|---|
-| ![Stock sheet](screenshots/stock-sheet.png) | ![Purchase list](screenshots/purchase-list.png) |
+|:---:|:---:|
+| <img src="screenshots/stock-sheet.png" alt="Stock sheet"> | <img src="screenshots/purchase-list.png" alt="Purchase list"> |
 
-**The n8n Workflows**
+<br>
 
-![n8n workflows](screenshots/n8n-workflows.png)
+### n8n Workflows
 
-*All Screenshots Use Test Data.*
+| Daily Stock Alerts | Telegram Stock Bot |
+|:---:|:---:|
+| <img src="screenshots/alerts.png" alt="Daily stock alerts workflow"> | <img src="screenshots/stock-bot.png" alt="Telegram stock bot workflow"> |
+
+<br>
+
+*Test Data Only.*
 
 ## Repository Structure
 
@@ -88,59 +81,47 @@ Telegram Trigger → Read Clients → Route & Parse → Registered?
     └── multi-pharmacy-setup.md        # Running The System For Many Pharmacies
 ```
 
+
 ## Requirements
 
-- n8n, self-hosted or Cloud (tested on n8n 2.x, self-hosted)
-- A Google Cloud project with the **Google Sheets API** and **Google Drive API** enabled
-- A Google **service account** with a JSON key
-- A Telegram bot created with **@BotFather**
-
-Everything except hosting is free.
+- n8n (Self-Hosted Or Cloud)
+- Google Cloud Service Account (Sheets + Drive API)
+- Telegram Bot From @BotFather
 
 ## Quick Start
 
-1. **Google:** follow [`docs/google-cloud-console.md`](docs/google-cloud-console.md).
-2. **Telegram Bot And Alerts:** follow [`docs/pharmacy-stock-management.md`](docs/pharmacy-stock-management.md), section 3.
-3. **Stock Bot:** follow [`docs/telegram-stock-bot.md`](docs/telegram-stock-bot.md).
-4. **Each New Pharmacy:** follow the onboarding checklist in `pharmacy-stock-management.md`, section 5.
-5. **More Than One Pharmacy:** read [`docs/multi-pharmacy-setup.md`](docs/multi-pharmacy-setup.md).
+1. **Google:** [`docs/google-cloud-console.md`](docs/google-cloud-console.md)
+2. **Alerts:** [`docs/pharmacy-stock-management.md`](docs/pharmacy-stock-management.md)
+3. **Bot:** [`docs/telegram-stock-bot.md`](docs/telegram-stock-bot.md)
+4. **Multiple Shops:** [`docs/multi-pharmacy-setup.md`](docs/multi-pharmacy-setup.md)
 
-Each guide gives two options: **import** the ready workflow, or **build it by hand** node by node using the scripts in `code/`.
-
-**Don't import `pharmacy-stock-bot.json` twice.** One Telegram bot can only feed one workflow. A second copy takes the bot over from the first.
-
-**Source Of Truth:** the workflow JSON files. The `code/` scripts are copies of the Code nodes. If you change code in n8n, re-export the workflow and update the matching file in `code/`.
+> Import the bot workflow **once**. One bot = one workflow.
 
 ## Bot Commands
 
 | Command | Action |
 |---|---|
-| `/stock napa` · `/stock` | Check One Medicine · List All |
-| `/sold napa 10, seclo 5` | Record Sales |
-| `/received napa 50` | Record A Delivery |
-| `/setmin napa 30` · `/setreorder napa 50` | Set Minimum · Set Order Quantity (`0` = Auto) |
-| `/new Name \| Qty \| Min \| Supplier \| Phone \| Expiry \| Reorder` | Add A Medicine |
-| `/delete napa` → `/delete Napa 500mg YES` | Delete, With Confirmation |
-| `/report` | Low Stock And Expiry Right Now |
+| `/stock` · `/stock napa` | List All · Check One |
+| `/sold napa 10` | Record Sale |
+| `/received napa 50` | Add Stock |
+| `/report` | Low Stock & Expiry |
+| `/setmin` · `/setreorder` | Min Stock · Order Qty |
+| `/new` · `/delete` | Add · Remove Medicine |
 | `/suppliers` · `/setsupplier` · `/supplierphone` · `/renamesupplier` | Manage Suppliers |
 
 ## Security
 
-This repository contains **no credentials**. The workflows use placeholders: `PASTE_YOUR_GOOGLE_SHEET_ID_HERE`, `PASTE_OWNER_TELEGRAM_CHAT_ID` and `PASTE_CLIENTS_SHEET_ID`.
-
-- Never commit your service account key, Telegram bot token or n8n encryption key.
-- If a secret leaks, revoke the token with `/revoke` in BotFather, or delete the key in Google Cloud and create a new one.
+No credentials in this repo. Never commit keys or tokens.
 
 ## Roadmap
 
-- [x] Daily Low-Stock And Expiry Alerts
-- [x] Telegram Stock Management Bot
-- [ ] Master Alert Workflow Driven By The Clients Sheet (One Workflow Instead Of One Per Pharmacy)
-- [ ] Faster Input For Busy Counters: A Photo Of The Day's Ledger Page, Read By AI, Confirmed With One Tap
-- [ ] Change Log (Who Changed What) And Staff Permissions (Block `/delete` For Staff)
+- [x] Daily Alerts
+- [x] Telegram Stock Bot
+- [ ] One Alert Workflow For All Shops
+- [ ] Ledger Photo → AI → Stock Update
+- [ ] Change Log & Staff Permissions
 - [ ] WhatsApp Alerts
-- [ ] Sales History Log
 
 ---
 
-Built by **Ishfaq Builds**.
+Built By **Ishfaq Builds**.
