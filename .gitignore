@@ -1,0 +1,13 @@
+# Secrets
+*.key
+*-key.json
+service-account*.json
+credentials*.json
+.env
+
+# Private notes
+setup.md
+context.md
+
+# Mac
+.DS_Store
