@@ -48,8 +48,6 @@
 
 <br>
 
-*Test Data Only.*
-
 ## Repository Structure
 
 ```
