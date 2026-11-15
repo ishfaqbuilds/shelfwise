@@ -47,7 +47,7 @@ Telegram Trigger → Read Clients → Route & Parse → Registered?
 
 **Command List**: what staff see when they send `/help`.
 
-![Bot commands](screenshots/help-commands.png)
+![Bot commands](screenshots/help-command.png)
 
 **Google Sheets As The Database**: the stock tab (left) and the dated purchase list the workflow writes (right).
 
