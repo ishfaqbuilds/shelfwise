@@ -16,12 +16,6 @@
 - Partial name search
 - One bot for all shops
 
-## How It Works
-
-**📦 Daily Alerts:** 9AM → Read Stock → Telegram Report + Purchase List
-
-**💬 Stock Bot:** Command → Find Shop → Update Stock → Reply
-
 ## Screenshots
 
 ### Telegram Bot
