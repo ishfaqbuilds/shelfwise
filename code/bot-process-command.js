@@ -3,6 +3,23 @@ const ctx = $('Route & Parse').first().json;
 const chatId = ctx.chatId;
 const text = ctx.text || '';
 const EXPIRY_WARNING_DAYS = 30;
+const DASHBOARD_URL = 'https://YOUR-N8N-DOMAIN/webhook/shelfwise';
+const keys = [];   // new dashboard keys to save in the Clients sheet
+
+// A private dashboard key for this person (made once, then reused)
+const newKey = () => {
+  const a = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+  let out = '';
+  const c = globalThis.crypto;
+  if (c && c.getRandomValues) { const b = new Uint32Array(24); c.getRandomValues(b); for (const x of b) out += a[x % a.length]; }
+  else { for (let i = 0; i < 24; i++) out += a[Math.floor(Math.random() * a.length)]; }
+  return out;
+};
+const dashboardLink = () => {
+  let key = String(ctx.key || '').trim();
+  if (key.length < 16) { key = newKey(); keys.push({ ChatID: chatId, Key: key }); }
+  return DASHBOARD_URL + '?key=' + key;
+};
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -76,6 +93,7 @@ const HELP =
 /sold napa 10 → Record A Sale
 /received napa 50 → Add Stock
 /report → Low Stock &amp; Expiry
+/dashboard → Web Dashboard Link
 
 ⚙️ <b>Settings</b>
 /setmin napa 30 → Min Stock
@@ -98,7 +116,18 @@ const rest = firstSpace === -1 ? '' : text.slice(firstSpace).trim();
 let reply = '';
 
 switch (cmd) {
-  case '/start':
+  case '/start': {
+    const link = dashboardLink();
+    reply = `👋 <b>${esc(ctx.client || 'Welcome')}</b>\n\nYour chat ID: <code>${esc(chatId)}</code>\n🌐 <a href="${link}">Open Your Web Dashboard</a>\nKeep this link private.\n\n${HELP}`;
+    break;
+  }
+
+  case '/dashboard': {
+    const link = dashboardLink();
+    reply = `🌐 <b>Your Web Dashboard</b>\n<a href="${link}">${esc(link)}</a>\n\nKeep this link private. Anyone with it can edit your stock.`;
+    break;
+  }
+
   case '/help':
     reply = `👋 <b>${esc(ctx.client || 'Welcome')}</b>\n\n${HELP}`;
     break;
@@ -250,8 +279,10 @@ switch (cmd) {
       reply = 'Usage:\n/new Name | Qty | Min | Supplier | Phone | Expiry | Reorder\nOnly Name, Qty And Min Are Required.\nExample:\n/new Napa 500mg | 100 | 20 | Beximco Rep | 01700000001 | 2027-06-30 | 50';
       break;
     }
-    if (stock.some(s => s.name.toLowerCase() === name.toLowerCase())) {
-      reply = `⚠️ ${esc(name)} Already Exists. Use /received To Add Stock.`;
+    const normName = (s) => String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+    const same = stock.find(s => normName(s.name) === normName(name));
+    if (same) {
+      reply = `⚠️ ${esc(same.name)} Already Exists. Use /received To Add Stock.`;
       break;
     }
     if (reorder && isNaN(Number(reorder))) {
@@ -323,4 +354,4 @@ switch (cmd) {
 
 if (reply.length > 4000) reply = reply.slice(0, 3950) + '\n…Cut Off';
 
-return [{ json: { chatId, reply, updates: Object.values(updates), appends, deletes } }];
+return [{ json: { chatId, reply, updates: Object.values(updates), appends, deletes, keys } }];

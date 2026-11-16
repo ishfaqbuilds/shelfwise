@@ -1,0 +1,1 @@
+return ($input.first().json.payMessages || []).map(m => ({ json: m }));

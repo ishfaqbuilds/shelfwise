@@ -1,0 +1,841 @@
+{
+  "name": "ShelfWise Web (Client Dashboards)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "shelfwise",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "8a8a6aa5-39b1-4920-8889-f7c1313e2de0",
+      "name": "Page Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "0ad15a2d-4873-471d-b5de-14890d8bfbfd"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\n<title>ShelfWise Stock</title>\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap\">\n<style>\n:root{--bg:#f6f7f9;--panel:#ffffff;--fg:#14171c;--muted:#5f6670;--line:#e3e6ea;--accent:#1f6feb;--ok:#1a7f45;--warn:#b26a00;--bad:#c62828;--soft:#eef2f7;--shadow:0 10px 30px rgba(15,23,42,.12);color-scheme:light}\n@media (prefers-color-scheme:dark){:root{--bg:#0e1013;--panel:#171a1f;--fg:#eceef1;--muted:#9aa2ad;--line:#2a2f37;--accent:#5b9dff;--ok:#4cc38a;--warn:#e5a33a;--bad:#f06a6a;--soft:#1f242b;--shadow:0 10px 30px rgba(0,0,0,.5);color-scheme:dark}}\n*{box-sizing:border-box}\n[hidden]{display:none!important}\nbody{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 Inter,system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif}\n.wrap{max-width:1100px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:20px}\nh1,h2{font-family:\"Space Grotesk\",Inter,system-ui,sans-serif;margin:0}\nh1{font-size:1.8rem;font-weight:600;text-wrap:balance}\nh2{font-size:1.1rem;font-weight:600}\n.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px}\n.sub{color:var(--muted);margin:4px 0 0;font-size:.9rem}\n.btn{font:inherit;font-weight:600;font-size:.9rem;border-radius:8px;padding:8px 14px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}\n.btn:hover{border-color:var(--muted)}\n.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}\n.btn.danger{color:var(--bad);border-color:var(--bad);background:transparent}\n.btn.small{padding:5px 10px;font-size:.82rem}\n.btn:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}\n.btn:disabled{opacity:.5;cursor:default}\n.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}\n@media (max-width:720px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}\n.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}\n.kpi .l{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}\n.kpi .v{font-family:\"Space Grotesk\",Inter,sans-serif;font-size:2.2rem;font-weight:600;line-height:1.15;font-variant-numeric:tabular-nums}\n.kpi .n{font-size:.8rem;color:var(--muted)}\n.kpi.warn .v{color:var(--warn)}.kpi.bad .v{color:var(--bad)}\n.grid2{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px}\n@media (max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}\n.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}\n.cardhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}\n.mini{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.9rem}\n.mini th{text-align:left;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}\n.mini td{padding:8px;border-bottom:1px solid var(--line)}\n.mini tr:last-child td{border-bottom:0}\n.mini .r{text-align:right}\n.scroll{overflow-x:auto}\n.empty{color:var(--muted);text-align:center;padding:18px 8px}\n.search{font:inherit;width:260px;max-width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg)}\n.list{display:flex;flex-direction:column}\n.item{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1.2fr) auto;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line)}\n.item:last-child{border-bottom:0}\n.item .name{font-weight:600;overflow-wrap:anywhere}\n.item .sup{font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}\n.item .qty{font-variant-numeric:tabular-nums}\n.item .qty small,.item .exp small{color:var(--muted)}\n.act{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}\n.btn.sold{color:var(--bad);border-color:var(--bad);background:transparent}\n.btn.recv{color:var(--ok);border-color:var(--ok);background:transparent}\n.qbig{font:600 1.6rem 'Space Grotesk',Inter,sans-serif;text-align:center;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);width:100%}\n@media (max-width:640px){.item{grid-template-columns:minmax(0,1fr)}.act{justify-content:flex-start}}\n.chip{display:inline-block;font-size:.72rem;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid currentColor;margin-left:6px;white-space:nowrap}\n.chip.ok{color:var(--ok)}.chip.warn{color:var(--warn)}.chip.bad{color:var(--bad)}\n.count{font-size:.85rem;color:var(--muted)}\n.notice.dup{text-align:left;border-color:var(--warn);color:var(--warn);padding:14px 16px;font-weight:500}\n.pager{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding-top:6px}\n.pager .btn{min-width:38px;padding:6px 10px}\n.pager .btn[aria-current=\"page\"]{background:var(--accent);border-color:var(--accent);color:#fff}\n.pager .gap{align-self:center;color:var(--muted);padding:0 2px}\n.notice{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;text-align:center}\n.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;padding:16px;z-index:20}\n@media (min-width:640px){.overlay{align-items:center}}\n.sheet{background:var(--panel);border-radius:14px;box-shadow:var(--shadow);width:100%;max-width:520px;max-height:90vh;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:14px}\n.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}\n.form .full{grid-column:1/-1}\n.field{display:flex;flex-direction:column;gap:4px;min-width:0}\n.field label{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}\n.field input{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);min-width:0}\n.field input[readonly]{opacity:.7}\n.adjust{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--soft);border-radius:10px;padding:10px}\n.adjust input{width:100px;font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--fg)}\n.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center}\n.err{color:var(--bad);font-size:.85rem;min-height:1.2em;margin:0}\n.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;z-index:30}\n.skel{color:transparent!important;background:var(--soft);border-radius:6px}\n@media (prefers-reduced-motion:no-preference){.btn{transition:border-color .15s}}\n</style>\n</head>\n<body>\n<div class=\"wrap\">\n  <div class=\"top\">\n    <div>\n      <h1 id=\"shopName\">ShelfWise Stock</h1>\n      <p class=\"sub\" id=\"updated\">Loading your stock…</p>\n    </div>\n    <div class=\"row\">\n      <button class=\"btn\" id=\"refreshBtn\" type=\"button\">Refresh</button>\n      <button class=\"btn primary\" id=\"addBtn\" type=\"button\">+ Add Medicine</button>\n    </div>\n  </div>\n\n  <div id=\"denied\" class=\"notice\" hidden>\n    <h2>This Link Isn't Working</h2>\n    <p class=\"sub\" id=\"deniedMsg\">Contact Ishfaq Builds for a new link.</p>\n  </div>\n\n  <div id=\"app\" style=\"display:flex;flex-direction:column;gap:20px\">\n    <div class=\"notice dup\" id=\"dupWarn\" role=\"alert\" hidden></div>\n    <div class=\"kpis\">\n      <div class=\"kpi warn\"><div class=\"l\">To Reorder</div><div class=\"v skel\" id=\"kReorder\">0</div><div class=\"n\">At or below min stock</div></div>\n      <div class=\"kpi bad\"><div class=\"l\">Out Of Stock</div><div class=\"v skel\" id=\"kOut\">0</div><div class=\"n\">Quantity is 0</div></div>\n      <div class=\"kpi warn\"><div class=\"l\">Expiring In 30 Days</div><div class=\"v skel\" id=\"kExpiring\">0</div><div class=\"n\">Sell or return first</div></div>\n      <div class=\"kpi bad\"><div class=\"l\">Expired</div><div class=\"v skel\" id=\"kExpired\">0</div><div class=\"n\">Remove from shelf</div></div>\n    </div>\n\n    <div class=\"grid2\">\n      <div class=\"card\">\n        <h2>Order Today</h2>\n        <div class=\"scroll\"><table class=\"mini\"><thead><tr><th>Supplier</th><th>Medicine</th><th class=\"r\">Left</th><th class=\"r\">Order</th><th>Phone</th></tr></thead><tbody id=\"orders\"></tbody></table></div>\n        <nav class=\"pager\" id=\"ordersPager\" aria-label=\"Order Today pages\"></nav>\n      </div>\n      <div class=\"card\">\n        <h2>Expiring Soon</h2>\n        <div class=\"scroll\"><table class=\"mini\"><thead><tr><th>Medicine</th><th>Expiry</th><th class=\"r\">Days</th></tr></thead><tbody id=\"expiry\"></tbody></table></div>\n        <nav class=\"pager\" id=\"expiryPager\" aria-label=\"Expiring Soon pages\"></nav>\n      </div>\n    </div>\n\n    <div class=\"card\">\n      <div class=\"cardhead\">\n        <div><h2>All Stock</h2><span class=\"count\" id=\"count\"></span></div>\n        <input class=\"search\" id=\"search\" type=\"search\" placeholder=\"Search medicine or supplier\" aria-label=\"Search stock\">\n      </div>\n      <div class=\"list\" id=\"list\"></div>\n      <nav class=\"pager\" id=\"pager\" aria-label=\"Stock pages\"></nav>\n    </div>\n  </div>\n</div>\n\n<div class=\"overlay\" id=\"editor\" hidden>\n  <div class=\"sheet\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"edTitle\">\n    <h2 id=\"edTitle\">Edit Medicine</h2>\n    <form class=\"form\" id=\"edForm\" novalidate>\n      <div class=\"field full\"><label for=\"fMed\">Medicine</label><input id=\"fMed\" maxlength=\"100\" autocomplete=\"off\" required></div>\n      <div class=\"field\"><label for=\"fQty\">Quantity</label><input id=\"fQty\" type=\"number\" min=\"0\" step=\"1\" inputmode=\"numeric\" required></div>\n      <div class=\"field\"><label for=\"fMin\">Min Stock</label><input id=\"fMin\" type=\"number\" min=\"0\" step=\"1\" inputmode=\"numeric\" required></div>\n      <div class=\"adjust full\" id=\"adjust\">\n        <input id=\"fAmt\" type=\"number\" min=\"1\" step=\"1\" inputmode=\"numeric\" placeholder=\"Amount\" aria-label=\"Amount\">\n        <button class=\"btn small\" type=\"button\" id=\"soldBtn\">− Sold</button>\n        <button class=\"btn small\" type=\"button\" id=\"recvBtn\">+ Received</button>\n      </div>\n      <div class=\"field\"><label for=\"fReo\">Reorder Qty</label><input id=\"fReo\" type=\"number\" min=\"0\" step=\"1\" inputmode=\"numeric\" placeholder=\"Auto\"></div>\n      <div class=\"field\"><label for=\"fExp\">Expiry Date</label><input id=\"fExp\" type=\"date\"></div>\n      <div class=\"field\"><label for=\"fSup\">Supplier</label><input id=\"fSup\" maxlength=\"100\" autocomplete=\"off\"></div>\n      <div class=\"field\"><label for=\"fPhone\">Supplier Phone</label><input id=\"fPhone\" inputmode=\"tel\" maxlength=\"20\" autocomplete=\"off\"></div>\n    </form>\n    <p class=\"err\" id=\"edErr\" role=\"alert\"></p>\n    <div class=\"row\">\n      <button class=\"btn danger\" type=\"button\" id=\"delBtn\">Delete</button>\n      <div class=\"row\">\n        <button class=\"btn\" type=\"button\" id=\"cancelBtn\">Cancel</button>\n        <button class=\"btn primary\" type=\"button\" id=\"saveBtn\">Save</button>\n      </div>\n    </div>\n  </div>\n</div>\n\n<div class=\"overlay\" id=\"quick\" hidden>\n  <div class=\"sheet\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"qTitle\">\n    <h2 id=\"qTitle\">Sold</h2>\n    <p class=\"sub\" id=\"qInfo\"></p>\n    <div class=\"field\"><label for=\"qAmt\" id=\"qLabel\">How many?</label><input class=\"qbig\" id=\"qAmt\" type=\"number\" min=\"1\" step=\"1\" inputmode=\"numeric\"></div>\n    <p class=\"err\" id=\"qErr\" role=\"alert\"></p>\n    <div class=\"row\" style=\"justify-content:flex-end\">\n      <button class=\"btn\" type=\"button\" id=\"qCancel\">Cancel</button>\n      <button class=\"btn primary\" type=\"button\" id=\"qOk\">Confirm</button>\n    </div>\n  </div>\n</div>\n\n<div class=\"toast\" id=\"toast\" hidden></div>\n\n<script>\nconst CFG = { key: \"{{ String($json.query.key || '').replace(/[^A-Za-z0-9]/g, '') }}\", api: \"{{ 'https://' + String($json.headers['x-forwarded-host'] || $json.headers.host || '').replace(/[^A-Za-z0-9.:-]/g, '') + '/webhook/' }}\" };\nconst $ = (id) => document.getElementById(id);\nlet items = [];\nlet editing = null;\nlet delArmed = false;\nconst PAGE_SIZE = 20;\nconst SMALL_PAGE = 6;\nlet page = 1, ordersPage = 1, expiryPage = 1;\n\nconst num = (v) => (v === null || v === undefined || v === '' || isNaN(Number(v))) ? null : Number(v);\nconst today = () => { const n = new Date(); return Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()); };\nconst daysTo = (d) => /^\\d{4}-\\d{2}-\\d{2}$/.test(String(d || '')) ? Math.round((Date.parse(d + 'T00:00:00Z') - today()) / 86400000) : null;\nconst status = (it) => {\n  const q = num(it.Quantity) || 0, m = num(it.MinStock) || 0, days = daysTo(it.ExpiryDate);\n  return { q, m, days, low: q <= m, out: q === 0, expired: days !== null && days < 0, expiring: days !== null && days >= 0 && days <= 30,\n           order: q <= m ? (num(it.ReorderQty) || Math.max(m * 2 - q, 1)) : null };\n};\nconst td = (text, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = text === null || text === undefined || text === '' ? '—' : String(text); return c; };\nconst emptyRow = (tbody, cols, text) => { const tr = document.createElement('tr'); const c = td(text, 'empty'); c.colSpan = cols; tr.appendChild(c); tbody.replaceChildren(tr); };\nconst chip = (text, tone) => { const s = document.createElement('span'); s.className = 'chip ' + tone; s.textContent = text; return s; };\nconst toast = (msg) => { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, 2500); };\n\nconst norm = (s) => String(s || '').toLowerCase().replace(/[^\\p{L}\\p{N}]/gu, '');\nfunction renderDupes() {\n  const groups = new Map();\n  items.forEach((it) => { const k = norm(it.Medicine); groups.set(k, (groups.get(k) || []).concat(it.Medicine)); });\n  const dupes = [...groups.values()].filter((g) => g.length > 1).map((g) => g[0]);\n  const el = $('dupWarn');\n  el.hidden = !dupes.length;\n  if (dupes.length) el.textContent = '⚠️ Duplicate medicines in your sheet: ' + dupes.join(', ') + '. Delete the extra rows in Google Sheets so stock stays correct.';\n}\nfunction render() {\n  renderDupes();\n  const s = items.map((it) => ({ it, st: status(it) }));\n  [['kReorder', s.filter((x) => x.st.low).length], ['kOut', s.filter((x) => x.st.out).length],\n   ['kExpiring', s.filter((x) => x.st.expiring).length], ['kExpired', s.filter((x) => x.st.expired).length]]\n    .forEach(([id, v]) => { const el = $(id); el.textContent = v; el.classList.remove('skel'); });\n\n  const orders = s.filter((x) => x.st.low).sort((a, b) => String(a.it.Supplier || '').localeCompare(String(b.it.Supplier || '')) || a.st.q - b.st.q);\n  const oPages = Math.max(1, Math.ceil(orders.length / SMALL_PAGE)); if (ordersPage > oPages) ordersPage = oPages;\n  makePager('ordersPager', oPages, ordersPage, (n) => { ordersPage = n; render(); });\n  const oShown = orders.slice((ordersPage - 1) * SMALL_PAGE, ordersPage * SMALL_PAGE);\n  if (!orders.length) emptyRow($('orders'), 5, 'Nothing to reorder.');\n  else $('orders').replaceChildren(...oShown.map(({ it, st }) => { const tr = document.createElement('tr'); tr.append(td(it.Supplier), td(it.Medicine), td(st.q, 'r'), td(st.order, 'r'), td(it.SupplierPhone)); return tr; }));\n\n  const exp = s.filter((x) => x.st.expired || x.st.expiring).sort((a, b) => a.st.days - b.st.days);\n  const ePages = Math.max(1, Math.ceil(exp.length / SMALL_PAGE)); if (expiryPage > ePages) expiryPage = ePages;\n  makePager('expiryPager', ePages, expiryPage, (n) => { expiryPage = n; render(); });\n  const eShown = exp.slice((expiryPage - 1) * SMALL_PAGE, expiryPage * SMALL_PAGE);\n  if (!exp.length) emptyRow($('expiry'), 3, 'Nothing expiring in 30 days.');\n  else $('expiry').replaceChildren(...eShown.map(({ it, st }) => { const tr = document.createElement('tr'); const d = td(st.days < 0 ? 'Expired' : st.days, 'r'); if (st.days < 0) d.style.color = 'var(--bad)'; tr.append(td(it.Medicine), td(it.ExpiryDate), d); return tr; }));\n\n  renderList();\n}\n\nfunction renderList() {\n  const q = $('search').value.trim().toLowerCase();\n  const list = items.filter((it) => !q || (String(it.Medicine || '') + ' ' + String(it.Supplier || '')).toLowerCase().includes(q))\n    .sort((a, b) => String(a.Medicine).localeCompare(String(b.Medicine), undefined, { sensitivity: 'base' }));\n  const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));\n  if (page > pages) page = pages;\n  const start = (page - 1) * PAGE_SIZE;\n  const shown = list.slice(start, start + PAGE_SIZE);\n  $('count').textContent = list.length\n    ? (start + 1) + '–' + (start + shown.length) + ' of ' + list.length + (q ? ' found' : ' medicines')\n    : (q ? '0 found' : '0 medicines');\n  renderPager(pages);\n  if (!list.length) {\n    const p = document.createElement('p'); p.className = 'empty';\n    p.textContent = items.length ? 'No medicines match \"' + $('search').value.trim() + '\".' : 'No medicines yet. Tap + Add Medicine.';\n    $('list').replaceChildren(p); return;\n  }\n  $('list').replaceChildren(...shown.map((it) => {\n    const st = status(it);\n    const row = document.createElement('div'); row.className = 'item';\n    const a = document.createElement('div');\n    const n = document.createElement('div'); n.className = 'name'; n.textContent = it.Medicine;\n    const sp = document.createElement('div'); sp.className = 'sup'; sp.textContent = it.Supplier || 'No supplier';\n    a.append(n, sp);\n    const b = document.createElement('div'); b.className = 'qty';\n    b.append(document.createTextNode(String(st.q) + ' '), Object.assign(document.createElement('small'), { textContent: '/ min ' + st.m }));\n    if (st.out) b.append(chip('Out', 'bad')); else if (st.low) b.append(chip('Low', 'warn'));\n    const c = document.createElement('div'); c.className = 'exp';\n    c.append(Object.assign(document.createElement('small'), { textContent: it.ExpiryDate ? 'Exp ' + it.ExpiryDate : 'No expiry' }));\n    if (st.expired) c.append(chip('Expired', 'bad')); else if (st.expiring) c.append(chip(st.days + 'd', 'warn'));\n    const d = document.createElement('div'); d.className = 'act';\n    const mk = (label, cls, aria, fn) => { const b = document.createElement('button'); b.className = 'btn small ' + cls; b.type = 'button'; b.textContent = label; b.setAttribute('aria-label', aria + ' ' + it.Medicine); b.addEventListener('click', fn); return b; };\n    d.append(mk('Sold', 'sold', 'Sold', () => openQuick(it, 'sold')), mk('Received', 'recv', 'Received', () => openQuick(it, 'received')), mk('Edit', '', 'Edit', () => openEditor(it)));\n    row.append(a, b, c, d);\n    return row;\n  }));\n}\n\nfunction renderPager(pages) {\n  makePager('pager', pages, page, (n) => { page = n; renderList(); $('list').scrollIntoView({ block: 'start', behavior: 'smooth' }); });\n}\nfunction makePager(navId, pages, current, go) {\n  const nav = $(navId);\n  const page = current;\n  if (pages <= 1) { nav.replaceChildren(); return; }\n  const btn = (label, n, opts) => {\n    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn small'; b.textContent = label;\n    if (opts && opts.current) b.setAttribute('aria-current', 'page');\n    if (opts && opts.aria) b.setAttribute('aria-label', opts.aria);\n    if (opts && opts.disabled) b.disabled = true; else b.addEventListener('click', () => go(n));\n    return b;\n  };\n  const nums = new Set([1, pages, page - 1, page, page + 1].filter((n) => n >= 1 && n <= pages));\n  const sorted = [...nums].sort((a, b) => a - b);\n  const parts = [btn('‹', page - 1, { aria: 'Previous page', disabled: page === 1 })];\n  sorted.forEach((n, i) => {\n    if (i && n - sorted[i - 1] > 1) { const g = document.createElement('span'); g.className = 'gap'; g.textContent = '…'; parts.push(g); }\n    parts.push(btn(String(n), n, { current: n === page, aria: 'Page ' + n }));\n  });\n  parts.push(btn('›', page + 1, { aria: 'Next page', disabled: page === pages }));\n  nav.replaceChildren(...parts);\n}\n\nasync function load(quiet) {\n  if (!CFG.key) return deny('This link has no key. Contact Ishfaq Builds for your link.');\n  try {\n    const r = await fetch(CFG.api + 'shelfwise-data?key=' + encodeURIComponent(CFG.key), { cache: 'no-store' });\n    const data = await r.json();\n    if (!data.ok) return deny(data.error);\n    items = Array.isArray(data.items) ? data.items : [];\n    $('shopName').textContent = data.shop || 'ShelfWise Stock';\n    document.title = (data.shop || 'ShelfWise') + ' · Stock';\n    $('updated').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ' · Changes also save to your Google Sheet';\n    render();\n  } catch (e) {\n    $('updated').textContent = 'Couldn\\'t load stock. Check your internet and tap Refresh.';\n    if (!quiet) toast('Couldn\\'t load stock');\n  }\n}\nfunction deny(msg) {\n  $('app').style.display = 'none'; $('addBtn').hidden = true; $('refreshBtn').hidden = true;\n  $('denied').hidden = false; if (msg) $('deniedMsg').textContent = msg; $('updated').textContent = '';\n}\n\nfunction openEditor(it) {\n  editing = it || null; delArmed = false;\n  $('edTitle').textContent = it ? 'Edit Medicine' : 'Add Medicine';\n  $('fMed').value = it ? it.Medicine : ''; $('fMed').readOnly = !!it;\n  $('fQty').value = it ? (num(it.Quantity) ?? 0) : '';\n  $('fMin').value = it ? (num(it.MinStock) ?? 0) : '';\n  $('fReo').value = it && num(it.ReorderQty) !== null ? it.ReorderQty : '';\n  $('fExp').value = it && /^\\d{4}-\\d{2}-\\d{2}$/.test(it.ExpiryDate || '') ? it.ExpiryDate : '';\n  $('fSup').value = it ? (it.Supplier || '') : '';\n  $('fPhone').value = it ? (it.SupplierPhone || '') : '';\n  $('fAmt').value = ''; $('adjust').hidden = !it; $('delBtn').hidden = !it; $('delBtn').textContent = 'Delete';\n  $('edErr').textContent = '';\n  $('editor').hidden = false;\n  setTimeout(() => (it ? $('fQty') : $('fMed')).focus(), 0);\n}\nfunction closeEditor() { $('editor').hidden = true; editing = null; }\nfunction adjust(sign) {\n  const a = num($('fAmt').value);\n  if (!a || a < 1) { $('edErr').textContent = 'Enter an amount first.'; return; }\n  const q = (num($('fQty').value) || 0) + sign * a;\n  $('fQty').value = Math.max(0, q); $('fAmt').value = ''; $('edErr').textContent = '';\n}\n\nasync function send(action, item) {\n  const body = new URLSearchParams({ payload: JSON.stringify({ key: CFG.key, action, item }) });\n  const r = await fetch(CFG.api + 'shelfwise-save', { method: 'POST', body });\n  let data = null; try { data = await r.json(); } catch (e) { data = null; }\n  if (!r.ok || !data || !data.ok) throw new Error((data && data.error) || 'Couldn\\'t save. Try again.');\n  return data;\n}\nasync function save() {\n  const item = { Medicine: $('fMed').value.trim(), Quantity: $('fQty').value, MinStock: $('fMin').value, ReorderQty: $('fReo').value,\n                 ExpiryDate: $('fExp').value, Supplier: $('fSup').value.trim(), SupplierPhone: $('fPhone').value.trim() };\n  if (!item.Medicine) return void ($('edErr').textContent = 'Enter the medicine name.');\n  if (item.Quantity === '' || item.MinStock === '') return void ($('edErr').textContent = 'Enter Quantity and Min Stock.');\n  if (!editing) { const same = items.find((x) => norm(x.Medicine) === norm(item.Medicine)); if (same) return void ($('edErr').textContent = '\"' + same.Medicine + '\" already exists. Edit it instead.'); }\n  $('saveBtn').disabled = true; $('saveBtn').textContent = 'Saving…';\n  try { await send(editing ? 'update' : 'add', item); closeEditor(); toast(editing === null ? 'Added' : 'Saved'); await load(true); }\n  catch (e) { $('edErr').textContent = e.message; }\n  finally { $('saveBtn').disabled = false; $('saveBtn').textContent = 'Save'; }\n}\nasync function del() {\n  if (!editing) return;\n  if (!delArmed) { delArmed = true; $('delBtn').textContent = 'Tap Again To Delete'; return; }\n  $('delBtn').disabled = true;\n  try { await send('delete', { Medicine: editing.Medicine }); closeEditor(); toast('Deleted'); await load(true); }\n  catch (e) { $('edErr').textContent = e.message; }\n  finally { $('delBtn').disabled = false; }\n}\n\nlet quick = null;\nfunction openQuick(it, kind) {\n  quick = { it, kind };\n  $('qTitle').textContent = (kind === 'sold' ? 'Sold · ' : 'Received · ') + it.Medicine;\n  $('qInfo').textContent = 'In stock now: ' + (num(it.Quantity) || 0);\n  $('qLabel').textContent = kind === 'sold' ? 'How many sold?' : 'How many received?';\n  $('qOk').textContent = kind === 'sold' ? 'Confirm Sold' : 'Confirm Received';\n  $('qAmt').value = ''; $('qErr').textContent = '';\n  $('quick').hidden = false;\n  setTimeout(() => $('qAmt').focus(), 0);\n}\nfunction closeQuick() { $('quick').hidden = true; quick = null; }\nasync function confirmQuick() {\n  if (!quick) return;\n  const a = num($('qAmt').value);\n  if (!a || a < 1 || !Number.isInteger(a)) { $('qErr').textContent = 'Enter a whole number, 1 or more.'; return; }\n  $('qOk').disabled = true;\n  try { const r = await send(quick.kind, { Medicine: quick.it.Medicine, Amount: a }); closeQuick(); toast(r.message || 'Saved'); await load(true); }\n  catch (e) { $('qErr').textContent = e.message; }\n  finally { $('qOk').disabled = false; }\n}\n$('qCancel').addEventListener('click', closeQuick);\n$('qOk').addEventListener('click', confirmQuick);\n$('qAmt').addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmQuick(); });\n$('quick').addEventListener('click', (e) => { if (e.target === $('quick')) closeQuick(); });\n\n$('search').addEventListener('input', () => { page = 1; renderList(); });\n$('refreshBtn').addEventListener('click', () => load());\n$('addBtn').addEventListener('click', () => openEditor(null));\n$('cancelBtn').addEventListener('click', closeEditor);\n$('saveBtn').addEventListener('click', save);\n$('delBtn').addEventListener('click', del);\n$('soldBtn').addEventListener('click', () => adjust(-1));\n$('recvBtn').addEventListener('click', () => adjust(1));\n$('edForm').addEventListener('submit', (e) => { e.preventDefault(); save(); });\n$('editor').addEventListener('click', (e) => { if (e.target === $('editor')) closeEditor(); });\ndocument.addEventListener('keydown', (e) => { if (e.key !== 'Escape') return; if (!$('quick').hidden) closeQuick(); else if (!$('editor').hidden) closeEditor(); });\nsetInterval(() => { if (document.visibilityState === 'visible' && $('editor').hidden && $('quick').hidden) load(true); }, 120000);\nload();\n</script>\n</body>\n</html>\n",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "2f4090f3-53c1-4f97-9d90-1b4290867e47",
+      "name": "Send Page",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "shelfwise-data",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "f14a8e01-1997-41a4-b606-cb0fdd27e58f",
+      "name": "Data Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        260
+      ],
+      "webhookId": "f17d209e-af19-4e75-9e66-0d42544233e8"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_CLIENTS_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clients",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "d4f41b0a-2abf-4635-9632-46843c7a962a",
+      "name": "Read Clients (Data)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        240,
+        260
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Find the shop for this link's key\nconst q = $('Data Webhook').first().json.query || {};\nconst key = String(q.key || '').trim();\nconst rows = $input.all().map(i => i.json);\nconst row = key.length >= 16 ? rows.find(r =>\n  String(r.Key || '').trim() === key &&\n  String(r.Active || 'YES').trim().toUpperCase() !== 'NO' &&\n  String(r.SheetID || '').trim()\n) : null;\nif (!row) return [{ json: { found: false, response: { ok: false, error: 'This link is not valid or has been paused. Contact Ishfaq Builds.' } } }];\nreturn [{ json: { found: true, sheetId: String(row.SheetID).trim(), shop: String(row.ClientName || '').trim() } }];\n"
+      },
+      "id": "37570af8-1bd1-4149-8e9c-dad6ed65eb1f",
+      "name": "Find Shop (Data)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "a92687c6-4b64-4879-9386-aba22832121d",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "88e9bf7a-11c9-4134-935c-3e60a2425aec",
+      "name": "Shop Found? (Data)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        720,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.sheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Stock",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "fcf775ee-4109-470b-8ea7-52d368c0396d",
+      "name": "Read Stock (Data)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        180
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Send this shop's stock to the dashboard\nconst ctx = $('Find Shop (Data)').first().json;\nconst n = (v) => (v === null || v === undefined || v === '' || isNaN(Number(v))) ? null : Number(v);\nconst phone = (p) => {\n  let d = String(p || '').replace(/\\D/g, '');\n  if (d.length === 10 && d.startsWith('1')) d = '0' + d;\n  if (d.length === 13 && d.startsWith('880')) d = '0' + d.slice(3);\n  return d;\n};\nconst items = $input.all().map(i => i.json)\n  .filter(r => String(r.Medicine || '').trim())\n  .map(r => ({\n    Medicine: String(r.Medicine).trim(),\n    Quantity: n(r.Quantity) ?? 0,\n    MinStock: n(r.MinStock) ?? 0,\n    ReorderQty: n(r.ReorderQty),\n    Supplier: String(r.Supplier || '').trim(),\n    SupplierPhone: phone(r.SupplierPhone),\n    ExpiryDate: String(r.ExpiryDate || '').trim()\n  }));\nreturn [{ json: { response: { ok: true, shop: ctx.shop, items } } }];\n"
+      },
+      "id": "2a790ad4-7706-4282-a0ee-3ef3d801fcee",
+      "name": "Build Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "986d8d81-e72c-4949-90cd-33365df0735c",
+      "name": "Send Data",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "5130f705-4a46-4d46-b4bf-fc20f36c0c6f",
+      "name": "Send Denied (Data)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "shelfwise-save",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "3820c4d6-aca9-4d90-be9c-ffc0285cd160",
+      "name": "Save Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        700
+      ],
+      "webhookId": "c1a7dada-d91f-4b94-b70f-1bbfdf4e6cf2"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_CLIENTS_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clients",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "adc4b708-cd51-4a7d-af33-1eb3994a1c4b",
+      "name": "Read Clients (Save)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        240,
+        700
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Read the change sent by the dashboard and find the shop for its key\nconst body = $('Save Webhook').first().json.body || {};\nlet p = {};\ntry { p = typeof body.payload === 'string' ? JSON.parse(body.payload) : (body.payload || body); } catch (e) { p = {}; }\nconst key = String(p.key || '').trim();\nconst rows = $input.all().map(i => i.json);\nconst row = key.length >= 16 ? rows.find(r =>\n  String(r.Key || '').trim() === key &&\n  String(r.Active || 'YES').trim().toUpperCase() !== 'NO' &&\n  String(r.SheetID || '').trim()\n) : null;\nif (!row) return [{ json: { found: false, response: { ok: false, error: 'This link is not valid or has been paused.' } } }];\nreturn [{ json: { found: true, sheetId: String(row.SheetID).trim(), action: String(p.action || ''), item: p.item || {} } }];\n"
+      },
+      "id": "2500de4a-5eb4-45aa-8f28-55f84e47016f",
+      "name": "Find Shop (Save)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c193b954-7400-453e-9851-7f265aff2ec5",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2d0f4be9-05cf-4f02-8442-bf439f31e2c4",
+      "name": "Shop Found? (Save)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        720,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.sheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Stock",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "e06b66d1-91b5-48f8-85d6-ca03c6d54835",
+      "name": "Read Stock (Save)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        620
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check the change, then plan the sheet write\nconst ctx = $('Find Shop (Save)').first().json;\nconst action = ctx.action;\nconst it = ctx.item || {};\nconst stock = $input.all().map(i => i.json).filter(r => String(r.Medicine || '').trim());\n\nconst text = (v, max) => String(v ?? '').replace(/[\\r\\n\\t]/g, ' ').trim().slice(0, max);\nconst whole = (v) => (v === '' || v === null || v === undefined) ? null : (/^\\d+$/.test(String(v).trim()) ? Number(v) : NaN);\nconst phone = (p) => {\n  let d = String(p || '').replace(/\\D/g, '');\n  if (d.length === 10 && d.startsWith('1')) d = '0' + d;\n  if (d.length === 13 && d.startsWith('880')) d = '0' + d.slice(3);\n  return d;\n};\nconst fail = (msg) => [{ json: { updates: [], appends: [], deletes: [], response: { ok: false, error: msg } } }];\n\n// Same medicine = same letters and numbers, ignoring case, spaces, dots and dashes\nconst norm = (s) => String(s || '').toLowerCase().replace(/[^\\p{L}\\p{N}]/gu, '');\nconst name = text(it.Medicine, 100).replace(/\\s+/g, ' ');\nif (!name) return fail('Enter the medicine name.');\nconst matches = stock.filter(r => norm(r.Medicine) === norm(name));\nif (matches.length > 1) return fail('\"' + String(matches[0].Medicine).trim() + '\" appears ' + matches.length + ' times in your sheet. Delete the extra row in Google Sheets first.');\nconst existing = matches[0];\n\nif (action === 'delete') {\n  if (!existing) return fail(name + ' was not found. Tap Refresh.');\n  return [{ json: { updates: [], appends: [], deletes: [{ row_number: existing.row_number }], response: { ok: true } } }];\n}\n\nif (action === 'sold' || action === 'received') {\n  if (!existing) return fail(name + ' was not found. Tap Refresh.');\n  const amount = whole(it.Amount);\n  if (!amount || isNaN(amount)) return fail('Enter how many, 1 or more.');\n  const before = Number(existing.Quantity) || 0;\n  const after = action === 'sold' ? Math.max(0, before - amount) : before + amount;\n  const note = action === 'sold' && amount > before ? ' (only had ' + before + ')' : '';\n  return [{ json: { updates: [{ Medicine: String(existing.Medicine).trim(), Quantity: after }], appends: [], deletes: [],\n    response: { ok: true, message: String(existing.Medicine).trim() + ': ' + before + ' → ' + after + note } } }];\n}\n\nconst qty = whole(it.Quantity), min = whole(it.MinStock), reo = whole(it.ReorderQty);\nif (qty === null || isNaN(qty)) return fail('Quantity must be a whole number, 0 or more.');\nif (min === null || isNaN(min)) return fail('Min Stock must be a whole number, 0 or more.');\nif (isNaN(reo)) return fail('Reorder Qty must be a whole number, or left empty for auto.');\nconst expiry = text(it.ExpiryDate, 10);\nif (expiry && !/^\\d{4}-\\d{2}-\\d{2}$/.test(expiry)) return fail('Expiry must be a date like 2027-06-30.');\n\nconst row = {\n  Medicine: existing ? String(existing.Medicine).trim() : name,\n  Quantity: qty,\n  MinStock: min,\n  ReorderQty: reo === null ? '' : reo,\n  Supplier: text(it.Supplier, 100),\n  SupplierPhone: phone(it.SupplierPhone),\n  ExpiryDate: expiry\n};\n\nif (action === 'update') {\n  if (!existing) return fail(name + ' was not found. Tap Refresh.');\n  return [{ json: { updates: [row], appends: [], deletes: [], response: { ok: true } } }];\n}\nif (action === 'add') {\n  if (existing) return fail('\"' + String(existing.Medicine).trim() + '\" already exists. Edit it instead.');\n  return [{ json: { updates: [], appends: [row], deletes: [], response: { ok: true } } }];\n}\nreturn fail('Unknown action.');\n"
+      },
+      "id": "ae43f47d-f7c2-4c82-b45d-951d84fd0a68",
+      "name": "Plan Change",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($input.first().json.updates || []).map(u => ({ json: u }));"
+      },
+      "id": "3cebcaa9-3b77-4183-853c-16bc74b158df",
+      "name": "Split Updates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Find Shop (Save)').first().json.sheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Stock",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Medicine"
+          ],
+          "schema": [
+            {
+              "id": "Medicine",
+              "displayName": "Medicine",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "MinStock",
+              "displayName": "MinStock",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ReorderQty",
+              "displayName": "ReorderQty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Supplier",
+              "displayName": "Supplier",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SupplierPhone",
+              "displayName": "SupplierPhone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ExpiryDate",
+              "displayName": "ExpiryDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "11734df8-b480-4fb7-8640-f79f5a4c1931",
+      "name": "Update Stock",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($input.first().json.appends || []).map(a => ({ json: a }));"
+      },
+      "id": "4a96e8c6-46b5-472a-b09e-799c84fa25aa",
+      "name": "Split New Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Find Shop (Save)').first().json.sheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Stock",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "9d6da7d6-cc42-440b-a7ca-cb8f040e45f3",
+      "name": "Add Medicine",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($input.first().json.deletes || []).map(d => ({ json: d }));"
+      },
+      "id": "cb6379e8-76d0-43d7-b76d-dc537dd0e2bf",
+      "name": "Split Deletes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Find Shop (Save)').first().json.sheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Stock",
+          "mode": "name"
+        },
+        "toDelete": "rows",
+        "startIndex": "={{ $json.row_number }}",
+        "numberToDelete": 1
+      },
+      "id": "15e5649a-cd77-44d0-a37e-4cb55b90f064",
+      "name": "Delete Row",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "15f02fb0-3b64-410f-a64d-d9cf8c6130fb",
+      "name": "Send Save Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "ddaa6342-bb8d-4ba1-9dc5-2ccfa2fbbaea",
+      "name": "Send Denied (Save)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        900
+      ]
+    }
+  ],
+  "connections": {
+    "Page Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Webhook": {
+      "main": [
+        [
+          {
+            "node": "Read Clients (Data)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Clients (Data)": {
+      "main": [
+        [
+          {
+            "node": "Find Shop (Data)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Shop (Data)": {
+      "main": [
+        [
+          {
+            "node": "Shop Found? (Data)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shop Found? (Data)": {
+      "main": [
+        [
+          {
+            "node": "Read Stock (Data)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Denied (Data)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Stock (Data)": {
+      "main": [
+        [
+          {
+            "node": "Build Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Data": {
+      "main": [
+        [
+          {
+            "node": "Send Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Webhook": {
+      "main": [
+        [
+          {
+            "node": "Read Clients (Save)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Clients (Save)": {
+      "main": [
+        [
+          {
+            "node": "Find Shop (Save)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Shop (Save)": {
+      "main": [
+        [
+          {
+            "node": "Shop Found? (Save)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shop Found? (Save)": {
+      "main": [
+        [
+          {
+            "node": "Read Stock (Save)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Denied (Save)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Stock (Save)": {
+      "main": [
+        [
+          {
+            "node": "Plan Change",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Change": {
+      "main": [
+        [
+          {
+            "node": "Split Updates",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split New Items",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Deletes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Save Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Updates": {
+      "main": [
+        [
+          {
+            "node": "Update Stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split New Items": {
+      "main": [
+        [
+          {
+            "node": "Add Medicine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Deletes": {
+      "main": [
+        [
+          {
+            "node": "Delete Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Dhaka"
+  },
+  "pinData": {}
+}

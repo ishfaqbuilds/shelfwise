@@ -1,0 +1,1 @@
+return ($input.first().json.shops || []).map(s => ({ json: s }));

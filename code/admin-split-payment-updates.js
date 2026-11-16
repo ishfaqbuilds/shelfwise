@@ -1,0 +1,1 @@
+return ($input.first().json.paymentUpdates || []).map(x => ({ json: x }));

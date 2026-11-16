@@ -6,15 +6,15 @@ One workflow serves **every** client. It looks up who sent the message in a **Cl
 
 **Files**
 
-- `workflows/pharmacy-stock-bot.json`: the finished workflow, ready to import
+- `workflows/shelfwise-bot.json`: the finished workflow, ready to import
 - `code/bot-*.js`: the code for each Code node, used when building by hand
-- `templates/clients-template.csv`: the Clients sheet
+- `templates/clients-template.csv`: the Admin sheet's Clients tab
 - `templates/stock-sheet-template.csv`: a pharmacy's stock sheet
 
 **Before you start, you need:**
 
 - The Google Service Account credential in n8n (see `google-cloud-console.md`)
-- A Telegram bot and its credential in n8n (see `pharmacy-stock-management.md`, section 3.1)
+- A Telegram bot and its credential in n8n (see `pharmacy-stock-management.md`, section 2)
 - At least one stock sheet, shared with the service account email as Editor
 
 ---
@@ -27,6 +27,7 @@ Telegram Trigger → Read Clients → Route & Parse → Registered?
                                                     │                        ├→ Split Updates   → Update Stock
                                                     │                        ├→ Split New Items → Add New Medicine
                                                     │                        ├→ Split Deletes   → Delete Medicine Row
+                                                    │                        ├→ Split Keys      → Save Dashboard Key
                                                     │                        └→ Send Reply
                                                     └ false → Reply: Not Registered
 ```
@@ -37,55 +38,53 @@ Telegram Trigger → Read Clients → Route & Parse → Registered?
 4. **Registered?** passes unknown senders to a reply that shows them their chat ID ("This Is A Private Assistant For Registered Shops Only…").
 5. **Read Stock** loads that pharmacy's Stock tab.
 6. **Process Command** works out what to change and writes the reply text.
-7. **The three Split nodes** turn the changes into rows, and the Sheets nodes write them.
+7. **The Split nodes** turn the changes into rows, and the Sheets nodes write them. **Split Keys** saves a new dashboard key to the Clients tab on `/start` or `/dashboard`.
 8. **Send Reply** answers the user.
 
 **Rules that never change:**
 
-- **A Telegram bot can only feed one workflow** (one webhook per bot). Never duplicate this workflow per client. Add clients as rows in the Clients sheet instead. Alert workflows are fine, because they only *send* messages.
+- **A Telegram bot can only feed one workflow** (one webhook per bot). Never duplicate this workflow per client. Add clients as rows in the Clients sheet instead. The daily workflow is fine, because it only *sends* messages.
 - **Medicine names must be unique** within each Stock tab. Updates match rows by the `Medicine` column.
 - **Don't rename sheet columns or tabs.** Always start new clients from the template.
 
 ---
 
-## 2. Create the Clients sheet (one time)
+## 2. The Clients tab
 
-1. Create a Google Sheet called `Admin – Clients`.
-2. Go to **File → Import → Upload → `clients-template.csv` → Replace current sheet**, and rename the tab **`Clients`**.
-3. Share it with the service account email as **Editor**.
-4. Copy the sheet ID from the URL (between `/d/` and `/edit`).
+The bot uses the **Clients** tab of your Admin sheet (see `pharmacy-stock-management.md`, section 1).
 
-| ClientName | ChatID | SheetID | Active | Role | Alerts | Phone | PaidUntil | Notes |
-|---|---|---|---|---|---|---|---|---|
-| Al Modina Pharmacy | 5820000000 | 1abcDEF... | YES | Owner | YES | 01700000000 | 2026-12-31 | Paid cash |
-| Al Modina Pharmacy | 6110000000 | 1abcDEF... | YES | Staff | NO | 01800000000 | 2026-12-31 | Counter staff |
+| ClientName | ChatID | SheetID | Active | Role | Alerts | Phone | Notes | Key | ID |
+|---|---|---|---|---|---|---|---|---|---|
+| Test Pharmacy | 5820000000 | 1abcDEF... | YES | Owner | YES | 01700000000 | | (auto) | C001 |
+| Test Pharmacy | 6110000000 | 1abcDEF... | YES | Staff | NO | 01800000000 | Counter staff | (auto) | C002 |
 
-- **One row per person.** Several staff of the same pharmacy share the same `SheetID`.
-- **Used by the bot:** `ClientName`, `ChatID`, `SheetID`, `Active`. `Active` = `NO` blocks that person, and a blank value counts as active.
-- **Your records only (the bot ignores them):** `Role` (Owner/Staff), `Alerts` (YES/NO, for the future master alert workflow), `Phone`, `PaidUntil` (YYYY-MM-DD), `Notes`.
-- Format the **Phone** column as **Plain text** so the leading 0 stays.
-- **Don't rename or reorder** the first four columns. You can add more columns to the right.
+- **One row per person.** Staff of the same shop share the same `SheetID`.
+- **Used by the bot:** `ClientName`, `ChatID`, `SheetID`, `Active`, `Key`. `Active` = `NO` blocks that person. Blank counts as active.
+- **Key** is filled by the bot. Clear it to revoke that person's dashboard link.
+- Format `ChatID`, `SheetID`, `Phone` and `Key` as **Plain text**.
+- **Don't rename columns.** You can add more columns to the right.
 
 ---
 
 ## 3. Option A: Import the finished workflow (fast)
 
-1. In n8n, click **+ → Workflow → ⋯ → Import from File → `pharmacy-stock-bot.json`**.
+1. In n8n, click **+ → Workflow → ⋯ → Import from File → `shelfwise-bot.json`**.
 2. In the 3 Telegram nodes, choose your Telegram credential.
-3. In the 5 Google Sheets nodes, choose your service account credential.
-4. In **Read Clients**, paste the Clients sheet ID.
-5. **Check these, because imports sometimes lose them:**
+3. In the 6 Google Sheets nodes, choose your service account credential.
+4. In **Read Clients** and **Save Dashboard Key**, replace `PASTE_CLIENTS_SHEET_ID` with your Admin sheet ID.
+5. In **Process Command**, replace `YOUR-N8N-DOMAIN` in `DASHBOARD_URL`.
+6. **Check these, because imports sometimes lose them:**
    - In **Update Stock**, **Add New Medicine** and **Delete Medicine Row**, Sheet must be **By Name: `Stock`**.
    - In **Update Stock**, set **Map Automatically** and **Column to match on: Medicine**. If that field is missing, use the trick in step 4.11.
    - In **Add New Medicine**, set **Map Automatically**.
    - In **Update Stock** and **Add New Medicine**, set **Options → Cell Format → Let n8n format**.
-6. Go to section 5 (Test and publish).
+7. Go to section 5 (Test and publish).
 
 ---
 
 ## 4. Option B: Build it by hand, node by node
 
-Create a new workflow and name it `Pharmacy - Telegram Stock Bot (All Clients)`.
+Create a new workflow and name it `ShelfWise Bot (Telegram)`.
 
 ### 4.1 Telegram Trigger
 
@@ -136,13 +135,16 @@ Create a new workflow and name it `Pharmacy - Telegram Stock Bot (All Clients)`.
 - **Code:** paste `code/bot-process-command.js`
 - **Output:** `{ chatId, reply, updates[], appends[], deletes[] }`
 
-### 4.8 The three Split nodes (each connected to Process Command)
+### 4.8 The four Split nodes (each connected to Process Command)
 
 | Node name | Code file |
 |---|---|
 | Split Updates | `code/bot-split-updates.js` |
 | Split New Items | `code/bot-split-new-items.js` |
 | Split Deletes | `code/bot-split-deletes.js` |
+| Split Keys | `code/bot-split-keys.js` |
+
+**Save Dashboard Key** (after Split Keys): Google Sheets → **Update row in sheet**. Document: Admin sheet ID. Sheet: `Clients`. Map Automatically. Column to match on: **ChatID**. Cell Format: Let n8n format.
 
 Each one returns nothing when there's nothing to do, so the Sheets node after it simply doesn't run.
 
@@ -186,7 +188,7 @@ Each one returns nothing when there's nothing to do, so the Sheets node after it
 - **Additional Fields:**
   - **Parse Mode:** HTML
   - **Append n8n Attribution:** off
-- **Place it at the bottom of the canvas,** below the three Split nodes. n8n runs branches top to bottom, so the reply only goes out after the sheet writes succeed.
+- **Place it at the bottom of the canvas,** below the Split nodes. n8n runs branches top to bottom, so the reply only goes out after the sheet writes succeed.
 
 ### 4.13 Settings
 
@@ -208,7 +210,9 @@ Each one returns nothing when there's nothing to do, so the Sheets node after it
 
 | Command | What it does |
 |---|---|
-| `/help` or `/start` | Shows the command list, grouped into Stock, Settings and Suppliers |
+| `/help` | Shows the command list, grouped into Stock, Settings and Suppliers |
+| `/start` | Command list plus the web dashboard link (creates a key if missing) |
+| `/dashboard` | Sends the web dashboard link again |
 | `/stock napa` | Shows quantity, minimum and reorder amount |
 | `/stock` | Lists all medicines (🔴 = low) |
 | `/sold napa 10, seclo 5` | Subtracts stock. Several items are allowed, separated by commas or new lines |
@@ -239,8 +243,8 @@ Each one returns nothing when there's nothing to do, so the Sheets node after it
 
 1. Create their stock sheet from the template and share it with the service account email.
 2. The owner (and any staff) open the bot and send `/start`. The bot replies with their **chat ID**.
-3. Add one row per person to the Clients sheet: name, chat ID, sheet ID, `YES`, role, alerts, phone, paid-until date and notes.
-4. They send `/help` again and now see their pharmacy name.
+3. Add one row per person (admin panel **+ User**, or the Clients tab): name, chat ID, sheet ID, `YES`, role, alerts, phone.
+4. They send `/start` again. They see their shop name and get their dashboard link.
 
 You don't need to change anything in n8n.
 
