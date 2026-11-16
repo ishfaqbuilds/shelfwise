@@ -1,0 +1,1 @@
+return ($input.first().json.clientAdds || []).map(x => ({ json: x }));

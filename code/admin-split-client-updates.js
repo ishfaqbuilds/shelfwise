@@ -1,0 +1,1 @@
+return ($input.first().json.clientUpdates || []).map(x => ({ json: x }));

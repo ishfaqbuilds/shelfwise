@@ -1,0 +1,295 @@
+{
+  "name": "ShelfWise Daily (Stock Alerts + Payments)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "c9dcd4b0-4a87-4da9-a4f4-b7036fb3826d",
+      "name": "Every Morning 9AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_CLIENTS_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clients",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "29357cc5-b5eb-4acc-a555-135c934d4633",
+      "name": "Read Clients",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        220,
+        200
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_CLIENTS_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Payments",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "5d964859-733d-4b25-a2d9-e494cc2167ff",
+      "name": "Read Payments",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        200
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== Settings =====\nconst ADMIN_CHAT_ID = 'PASTE_YOUR_CHAT_ID';           // your Telegram chat ID (daily payment summary)\nconst REMIND_DAYS = [3, 1, 0, -1, -3, -7];    // remind owners 3 and 1 days before, on the day, then 1, 3, 7 days late\n\nconst MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];\nconst esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Dhaka' });\nconst dayDiff = (d) => Math.round((Date.parse(d + 'T00:00:00Z') - Date.parse(today + 'T00:00:00Z')) / 86400000);\nconst nice = (d) => { const [y, m, dd] = d.split('-').map(Number); return dd + ' ' + MONTHS[m - 1]; };\nconst taka = (n) => n === '' || n === null || n === undefined || isNaN(Number(n)) ? '' : '৳' + Number(n).toLocaleString('en-IN');\nconst on = (v) => !['OFF', 'NO', 'FALSE'].includes(String(v || 'ON').trim().toUpperCase());\n\nconst clients = $('Read Clients').all().map(i => i.json).filter(c => String(c.ClientName || '').trim());\nconst payments = $input.all().map(i => i.json).filter(p => String(p.PaymentID || '').trim());\n\n// ---- 9AM stock alerts: one entry per stock sheet, sent to users with Alerts ON ----\nconst shops = new Map();\nfor (const c of clients) {\n  const sheet = String(c.SheetID || '').trim();\n  const chat = String(c.ChatID || '').trim();\n  if (!sheet || !chat) continue;\n  if (String(c.Active || 'YES').trim().toUpperCase() === 'NO') continue;\n  if (!on(c.Alerts)) continue;\n  const s = shops.get(sheet) || { sheetId: sheet, shop: String(c.ClientName).trim(), chatIds: [] };\n  if (!s.chatIds.includes(chat)) s.chatIds.push(chat);\n  shops.set(sheet, s);\n}\n\n// ---- Payment reminders to owners, plus a summary for you ----\nconst payMessages = [];\nconst overdue = [], dueSoon = [];\nfor (const p of payments) {\n  const status = String(p.Status || 'Due').trim();\n  const date = String(p.PaymentDate || '').trim();\n  if (status === 'Paid' || status === 'Cancelled' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) continue;\n  const d = dayDiff(date);\n  const name = String(p.ClientName).trim();\n  const amt = taka(p.Amount);\n  if (d < 0) overdue.push({ name, date, d, amt }); else if (d <= 7) dueSoon.push({ name, date, d, amt });\n  if (!REMIND_DAYS.includes(d)) continue;\n  const owners = clients.filter(c => String(c.ClientName).trim() === name && String(c.Active || 'YES').trim().toUpperCase() !== 'NO'\n    && /^owner$/i.test(String(c.Role || '').trim()) && String(c.ChatID || '').trim());\n  const when = d > 1 ? 'In ' + d + ' Days' : d === 1 ? 'Tomorrow' : d === 0 ? 'Today' : (-d) + (d === -1 ? ' Day' : ' Days') + ' Late';\n  const title = d < 0 ? '⚠️ <b>Payment Overdue</b>' : '💳 <b>Payment Reminder</b>';\n  const msg = title + '\\n\\nShop: ' + esc(name) + (amt ? '\\nAmount: ' + amt : '') + '\\nDue: ' + nice(date) + ' (' + when + ')\\n\\n'\n    + (d < 0 ? 'Please Pay Soon To Keep ShelfWise Running.' : 'Thank You For Using ShelfWise!') + '\\nQuestions? Contact Ishfaq Builds.';\n  owners.forEach(o => payMessages.push({ chatId: String(o.ChatID).trim(), message: msg }));\n}\nif (ADMIN_CHAT_ID && (overdue.length || dueSoon.length)) {\n  let m = '💳 <b>Payments (' + nice(today) + ')</b>\\n';\n  if (overdue.length) {\n    overdue.sort((a, b) => a.d - b.d);\n    m += '\\n🔴 <b>Overdue [' + overdue.length + ']</b>\\n' + overdue.map((x, i) => (i + 1) + '. ' + esc(x.name) + (x.amt ? ' · ' + x.amt : '') + ' · ' + (-x.d) + 'd late').join('\\n') + '\\n';\n  }\n  if (dueSoon.length) {\n    dueSoon.sort((a, b) => a.d - b.d);\n    m += '\\n🟡 <b>Due In 7 Days [' + dueSoon.length + ']</b>\\n' + dueSoon.map((x, i) => (i + 1) + '. ' + esc(x.name) + (x.amt ? ' · ' + x.amt : '') + ' · ' + (x.d === 0 ? 'today' : nice(x.date))).join('\\n');\n  }\n  payMessages.push({ chatId: ADMIN_CHAT_ID, message: m.slice(0, 4000) });\n}\n\nreturn [{ json: { shops: [...shops.values()], payMessages } }];\n"
+      },
+      "id": "54e7e649-f759-45fa-ae24-e5545e264e77",
+      "name": "Plan Day",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($input.first().json.shops || []).map(s => ({ json: s }));"
+      },
+      "id": "48e99979-6cda-4e9b-8079-4d4b864fe330",
+      "name": "Shops",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.sheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Stock",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "1d2c3e0c-8e5f-4d82-8726-a813006c1433",
+      "name": "Read Stock",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1100,
+        100
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== Build each shop's 9AM stock report =====\nconst EXPIRY_WARNING_DAYS = 30;\nconst shops = $('Shops').all().map(i => i.json);\nconst MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];\nconst todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Dhaka' });\nconst today = Date.parse(todayStr + 'T00:00:00Z');\nconst [ty, tm, td] = todayStr.split('-').map(Number);\nconst esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst fixPhone = (p) => {\n  let s = String(p || '').replace(/\\D/g, '');\n  if (s.length === 10 && s.startsWith('1')) s = '0' + s;\n  if (s.length === 13 && s.startsWith('880')) s = '0' + s.slice(3);\n  return s;\n};\n\n// Put each stock row back with the shop it was read for\nconst rowsByShop = shops.map(() => []);\nfor (const it of $input.all()) {\n  const pi = Array.isArray(it.pairedItem) ? it.pairedItem[0] : it.pairedItem;\n  const idx = pi && typeof pi.item === 'number' ? pi.item : (typeof pi === 'number' ? pi : null);\n  if (idx === null || idx === undefined) {\n    if (shops.length > 1) throw new Error('Could not tell which shop a stock row belongs to. No alerts sent, to avoid mixing shops.');\n    rowsByShop[0].push(it.json); continue;\n  }\n  if (it.json && it.json.error) continue;   // that shop's sheet failed to load; others still get alerts\n  if (rowsByShop[idx]) rowsByShop[idx].push(it.json);\n}\n\nconst out = [];\nshops.forEach((shop, i) => {\n  const low = [], expiring = [];\n  for (const r of rowsByShop[i]) {\n    const name = String(r.Medicine || '').trim();\n    if (!name) continue;\n    const qty = Number(r.Quantity) || 0, min = Number(r.MinStock) || 0;\n    if (qty <= min) low.push({ name, qty, order: Number(r.ReorderQty) || Math.max(min * 2 - qty, 1),\n      supplier: String(r.Supplier || 'Unknown supplier').trim(), phone: fixPhone(r.SupplierPhone) });\n    const e = String(r.ExpiryDate || '').trim();\n    if (/^\\d{4}-\\d{2}-\\d{2}$/.test(e)) {\n      const days = Math.round((Date.parse(e + 'T00:00:00Z') - today) / 86400000);\n      if (days <= EXPIRY_WARNING_DAYS) { const [, m, d] = e.split('-').map(Number); expiring.push({ name, days, short: d + ' ' + MONTHS[m - 1] }); }\n    }\n  }\n  if (!low.length && !expiring.length) return;\n\n  let msg = `📦 <b>Stock Report · ${esc(shop.shop)} (${td} ${MONTHS[tm - 1]}, ${ty})</b>\\n`;\n  if (low.length) {\n    msg += `\\n🔴 <b>Order Today [${low.length}]</b>\\n`;\n    const by = {};\n    for (const p of low) (by[p.supplier] = by[p.supplier] || []).push(p);\n    Object.entries(by).forEach(([supplier, items], k) => {\n      if (k > 0) msg += `\\n`;\n      msg += `<b>Supplier: ${esc(supplier)}</b>\\n`;\n      if (items[0].phone) msg += `Sup. Num: ${items[0].phone}\\n`;\n      items.forEach((p, j) => { msg += `${j + 1}. ${esc(p.name)}: ${p.qty} left → order ${p.order}\\n`; });\n    });\n  }\n  if (expiring.length) {\n    expiring.sort((a, b) => a.days - b.days);\n    msg += low.length ? `-------------------------------------\\n` : `\\n`;\n    msg += `⚠️ <b>Expiring Soon [${expiring.length}]</b>\\n`;\n    expiring.forEach((e, k) => {\n      const when = e.days < 0 ? `EXPIRED ${-e.days} days ago (${e.short})` : e.days === 0 ? `expires today (${e.short})` : `${e.days} days (${e.short})`;\n      msg += `${k + 1}. ${esc(e.name)}: ${when}\\n`;\n    });\n  }\n  if (msg.length > 4000) msg = msg.slice(0, 3950) + '\\n…list cut off, see your dashboard';\n  shop.chatIds.forEach(chatId => out.push({ json: { chatId, message: msg } }));\n});\nreturn out;\n"
+      },
+      "id": "3815b94d-7bf8-47cf-9cc1-e5da6a9629b2",
+      "name": "Build Stock Alerts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "2a99d2f5-9a9e-425c-8bd9-b911fdaf994f",
+      "name": "Send Stock Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1540,
+        100
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($input.first().json.payMessages || []).map(m => ({ json: m }));"
+      },
+      "id": "16d54ff3-ade2-41b6-b2ec-08247d0dea7a",
+      "name": "Payment Messages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "cd49294b-7dba-4679-86ed-30dec976fd18",
+      "name": "Send Payment Reminder",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1100,
+        320
+      ],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Every Morning 9AM": {
+      "main": [
+        [
+          {
+            "node": "Read Clients",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Clients": {
+      "main": [
+        [
+          {
+            "node": "Read Payments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Payments": {
+      "main": [
+        [
+          {
+            "node": "Plan Day",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Day": {
+      "main": [
+        [
+          {
+            "node": "Shops",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Payment Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shops": {
+      "main": [
+        [
+          {
+            "node": "Read Stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Stock": {
+      "main": [
+        [
+          {
+            "node": "Build Stock Alerts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Stock Alerts": {
+      "main": [
+        [
+          {
+            "node": "Send Stock Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Payment Messages": {
+      "main": [
+        [
+          {
+            "node": "Send Payment Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Dhaka"
+  },
+  "pinData": {}
+}

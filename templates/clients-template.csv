@@ -1,2 +1,3 @@
-ClientName,ChatID,SheetID,Active,Role,Alerts,Phone,PaidUntil,Notes
-Test Pharmacy (me),PASTE_YOUR_CHAT_ID,PASTE_STOCK_SHEET_ID,YES,Owner,YES,01700000000,2026-12-31,Test account
+ClientName,ChatID,SheetID,Active,Role,Alerts,Phone,Notes,Key,ID
+Test Pharmacy,PASTE_OWNER_CHAT_ID,PASTE_STOCK_SHEET_ID,YES,Owner,YES,01700000000,Test account,,C001
+Test Pharmacy,PASTE_STAFF_CHAT_ID,PASTE_STOCK_SHEET_ID,YES,Staff,NO,01800000000,Counter staff,,C002

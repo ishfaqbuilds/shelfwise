@@ -1,0 +1,2 @@
+PaymentID,ClientName,PaymentDate,Amount,Status,PaidOn,Notes
+P001,Test Pharmacy,2026-12-01,1500,Due,,Monthly plan

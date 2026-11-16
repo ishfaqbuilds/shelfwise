@@ -1,0 +1,936 @@
+{
+  "name": "ShelfWise Admin Panel",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "shelfwise-admin",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "508b5d23-8fad-4b0f-b3ce-0e9c4aa27947",
+      "name": "Admin Page",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "a31c26d1-6946-4a56-8dba-f2571ecf6584"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\n<meta name=\"robots\" content=\"noindex, nofollow\">\n<title>ShelfWise Admin</title>\n<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap\">\n<style>\n:root{--bg:#f6f7f9;--panel:#fff;--fg:#14171c;--muted:#5f6670;--line:#e3e6ea;--accent:#1f6feb;--ok:#1a7f45;--warn:#b26a00;--bad:#c62828;--soft:#eef2f7;--shadow:0 10px 30px rgba(15,23,42,.12);color-scheme:light}\n@media (prefers-color-scheme:dark){:root{--bg:#0e1013;--panel:#171a1f;--fg:#eceef1;--muted:#9aa2ad;--line:#2a2f37;--accent:#5b9dff;--ok:#4cc38a;--warn:#e5a33a;--bad:#f06a6a;--soft:#1f242b;--shadow:0 10px 30px rgba(0,0,0,.5);color-scheme:dark}}\n*{box-sizing:border-box}\n[hidden]{display:none!important}\nbody{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 Inter,system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif}\n.wrap{max-width:1150px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:20px}\nh1,h2{font-family:\"Space Grotesk\",Inter,system-ui,sans-serif;margin:0}\nh1{font-size:1.7rem;font-weight:600}\nh2{font-size:1.1rem;font-weight:600}\n.sub{color:var(--muted);margin:4px 0 0;font-size:.9rem}\n.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px}\n.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}\n.spread{justify-content:space-between}\n.btn{font:inherit;font-weight:600;font-size:.9rem;border-radius:8px;padding:8px 14px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}\n.btn:hover{border-color:var(--muted)}\n.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}\n.btn.good{color:var(--ok);border-color:var(--ok);background:transparent}\n.btn.danger{color:var(--bad);border-color:var(--bad);background:transparent}\n.btn.small{padding:5px 10px;font-size:.82rem}\n.btn:disabled{opacity:.5;cursor:default}\n.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}\n.tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}\n.tab{font:inherit;font-weight:600;border:0;background:transparent;color:var(--muted);padding:7px 16px;border-radius:7px;cursor:pointer}\n.tab[aria-selected=\"true\"]{background:var(--soft);color:var(--fg)}\n.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}\n@media (max-width:720px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}\n.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}\n.kpi .l{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}\n.kpi .v{font-family:\"Space Grotesk\",Inter,sans-serif;font-size:2rem;font-weight:600;line-height:1.2;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}\n.kpi .n{font-size:.8rem;color:var(--muted)}\n.kpi.warn .v{color:var(--warn)}.kpi.bad .v{color:var(--bad)}.kpi.good .v{color:var(--ok)}\n.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}\n.scroll{overflow-x:auto}\ntable{width:100%;border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums}\nth{text-align:left;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}\ntd{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}\ntr:last-child td{border-bottom:0}\n.r{text-align:right}.nw{white-space:nowrap}.muted{color:var(--muted)}.strong{font-weight:600}\ntd.acts{white-space:nowrap;text-align:right}\ntd.acts .btn{margin-left:4px}\n.empty{color:var(--muted);text-align:center;padding:18px 8px}\n.toggle{font:inherit;font-weight:600;background:none;border:0;color:var(--fg);cursor:pointer;padding:0;text-align:left}\n.toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}\ntr.shop td{background:var(--soft)}\ntr.user td.indent{padding-left:24px;color:var(--muted);font-weight:500}\n.chip{display:inline-block;font-size:.72rem;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}\n.chip.ok{color:var(--ok)}.chip.warn{color:var(--warn)}.chip.bad{color:var(--bad)}.chip.mute{color:var(--muted)}\n.input,select.input{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);min-width:0}\n.search{width:240px;max-width:100%}\n.pager{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}\n.pager .btn{min-width:36px;padding:5px 9px}\n.pager .btn[aria-current=\"page\"]{background:var(--accent);border-color:var(--accent);color:#fff}\n.login{max-width:380px;margin:12vh auto 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:14px}\n.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;padding:16px;z-index:20}\n@media (min-width:640px){.overlay{align-items:center}}\n.sheet{background:var(--panel);border-radius:14px;box-shadow:var(--shadow);width:100%;max-width:520px;max-height:90vh;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:14px}\n.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}\n.full{grid-column:1/-1}\n.field{display:flex;flex-direction:column;gap:4px;min-width:0}\n.field label{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}\n.link{font-size:.82rem;word-break:break-all;background:var(--soft);border-radius:8px;padding:10px;user-select:all}\n.err{color:var(--bad);font-size:.85rem;min-height:1.2em;margin:0}\n.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;z-index:30;max-width:90vw}\n</style>\n</head>\n<body>\n\n<form class=\"login\" id=\"loginBox\" autocomplete=\"on\">\n  <h1>ShelfWise Admin</h1>\n  <div class=\"field\"><label for=\"pw\">Password</label><input class=\"input\" id=\"pw\" type=\"password\" autocomplete=\"current-password\" required></div>\n  <p class=\"err\" id=\"loginErr\" role=\"alert\"></p>\n  <button class=\"btn primary\" type=\"submit\" id=\"loginBtn\">Sign In</button>\n</form>\n\n<div class=\"wrap\" id=\"app\" hidden>\n  <div class=\"top\">\n    <div><h1>ShelfWise Admin</h1><p class=\"sub\" id=\"updated\"></p></div>\n    <div class=\"row\">\n      <div class=\"tabs\" role=\"tablist\" aria-label=\"Sections\">\n        <button class=\"tab\" role=\"tab\" id=\"tab-shops\" aria-selected=\"true\" aria-controls=\"shops\">Shops</button>\n        <button class=\"tab\" role=\"tab\" id=\"tab-pay\" aria-selected=\"false\" aria-controls=\"pay\">Payments</button>\n      </div>\n      <button class=\"btn\" type=\"button\" id=\"refreshBtn\">Refresh</button>\n      <button class=\"btn\" type=\"button\" id=\"logoutBtn\">Sign Out</button>\n    </div>\n  </div>\n\n  <section id=\"shops\" role=\"tabpanel\" aria-labelledby=\"tab-shops\" style=\"display:flex;flex-direction:column;gap:20px\">\n    <div class=\"kpis\">\n      <div class=\"kpi good\"><div class=\"l\">Active Shops</div><div class=\"v\" id=\"kActive\">—</div><div class=\"n\">At least one active user</div></div>\n      <div class=\"kpi\"><div class=\"l\">Paused Shops</div><div class=\"v\" id=\"kPaused\">—</div><div class=\"n\">All users set to NO</div></div>\n      <div class=\"kpi\"><div class=\"l\">Users</div><div class=\"v\" id=\"kUsers\">—</div><div class=\"n\">Rows in Clients</div></div>\n      <div class=\"kpi warn\"><div class=\"l\">No Dashboard Link</div><div class=\"v\" id=\"kNoLink\">—</div><div class=\"n\">Active users with a sheet</div></div>\n    </div>\n    <div class=\"card\">\n      <div class=\"row spread\">\n        <h2>Pharmacies</h2>\n        <div class=\"row\">\n          <input class=\"input search\" id=\"cSearch\" type=\"search\" placeholder=\"Search shop, phone or note\" aria-label=\"Search clients\">\n          <button class=\"btn primary\" type=\"button\" id=\"addClientBtn\">+ Add Client</button>\n        </div>\n      </div>\n      <div class=\"scroll\"><table>\n        <thead><tr><th>Pharmacy / Role</th><th>Users</th><th>Status</th><th>Alerts</th><th>Phone</th><th>Notes</th><th class=\"r\">Actions</th></tr></thead>\n        <tbody id=\"clientRows\"></tbody>\n      </table></div>\n      <nav class=\"pager\" id=\"cPager\" aria-label=\"Client pages\"></nav>\n    </div>\n  </section>\n\n  <section id=\"pay\" role=\"tabpanel\" aria-labelledby=\"tab-pay\" hidden style=\"flex-direction:column;gap:20px\">\n    <div class=\"kpis\">\n      <div class=\"kpi bad\"><div class=\"l\">Overdue</div><div class=\"v\" id=\"kOverdue\">—</div><div class=\"n\" id=\"kOverdueAmt\">&nbsp;</div></div>\n      <div class=\"kpi warn\"><div class=\"l\">Due In 7 Days</div><div class=\"v\" id=\"kDue7\">—</div><div class=\"n\" id=\"kDue7Amt\">&nbsp;</div></div>\n      <div class=\"kpi\"><div class=\"l\">Expected This Month</div><div class=\"v\" id=\"kExpected\">—</div><div class=\"n\">Due and paid this month</div></div>\n      <div class=\"kpi good\"><div class=\"l\">Collected This Month</div><div class=\"v\" id=\"kCollected\">—</div><div class=\"n\">Marked paid this month</div></div>\n    </div>\n    <div class=\"card\">\n      <div class=\"row spread\">\n        <h2>Payments</h2>\n        <div class=\"row\">\n          <input class=\"input search\" id=\"pSearch\" type=\"search\" placeholder=\"Search shop\" aria-label=\"Search payments\">\n          <select class=\"input\" id=\"pFilter\" aria-label=\"Show\">\n            <option value=\"open\">Due &amp; Overdue</option>\n            <option value=\"paid\">Paid</option>\n            <option value=\"all\">All</option>\n          </select>\n          <button class=\"btn primary\" type=\"button\" id=\"addPayBtn\">+ Add Payment</button>\n        </div>\n      </div>\n      <div class=\"scroll\"><table>\n        <thead><tr><th>Shop</th><th>Payment Date</th><th class=\"r\">Amount</th><th>Status</th><th>Paid On</th><th>Notes</th><th class=\"r\">Actions</th></tr></thead>\n        <tbody id=\"payRows\"></tbody>\n      </table></div>\n      <nav class=\"pager\" id=\"pPager\" aria-label=\"Payment pages\"></nav>\n    </div>\n  </section>\n</div>\n\n<div class=\"overlay\" id=\"clientEd\" hidden>\n  <div class=\"sheet\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"ceTitle\">\n    <h2 id=\"ceTitle\">Edit Client</h2>\n    <div class=\"form\">\n      <div class=\"field full\"><label for=\"cName\">Shop Name</label><input class=\"input\" id=\"cName\" maxlength=\"120\"></div>\n      <div class=\"field\"><label for=\"cRole\">Role</label><select class=\"input\" id=\"cRole\"><option>Owner</option><option>Manager</option><option>Staff</option></select></div>\n      <div class=\"field\"><label for=\"cPhone\">Phone</label><input class=\"input\" id=\"cPhone\" inputmode=\"tel\" maxlength=\"20\"></div>\n      <div class=\"field\"><label for=\"cActive\">Status</label><select class=\"input\" id=\"cActive\"><option value=\"YES\">Active</option><option value=\"NO\">Paused</option></select></div>\n      <div class=\"field\"><label for=\"cAlerts\">Alerts</label><select class=\"input\" id=\"cAlerts\"><option>ON</option><option>OFF</option></select></div>\n      <div class=\"field\"><label for=\"cChat\">Telegram Chat ID</label><input class=\"input\" id=\"cChat\" inputmode=\"numeric\" maxlength=\"20\"></div>\n      <div class=\"field\"><label for=\"cSheet\">Stock Sheet ID</label><input class=\"input\" id=\"cSheet\" maxlength=\"100\"></div>\n      <div class=\"field full\"><label for=\"cNotes\">Notes</label><input class=\"input\" id=\"cNotes\" maxlength=\"200\"></div>\n    </div>\n    <p class=\"err\" id=\"ceErr\" role=\"alert\"></p>\n    <div class=\"row spread\"><span></span><div class=\"row\"><button class=\"btn\" type=\"button\" id=\"ceCancel\">Cancel</button><button class=\"btn primary\" type=\"button\" id=\"ceSave\">Save</button></div></div>\n  </div>\n</div>\n\n<div class=\"overlay\" id=\"linkEd\" hidden>\n  <div class=\"sheet\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"leTitle\">\n    <h2 id=\"leTitle\">Dashboard Link</h2>\n    <p class=\"sub\" id=\"leInfo\"></p>\n    <div class=\"link\" id=\"leLink\"></div>\n    <p class=\"err\" id=\"leErr\" role=\"alert\"></p>\n    <div class=\"row spread\">\n      <button class=\"btn danger\" type=\"button\" id=\"leRemove\">Remove Link</button>\n      <div class=\"row\">\n        <button class=\"btn\" type=\"button\" id=\"leCopy\">Copy</button>\n        <a class=\"btn\" id=\"leOpen\" href=\"#\" target=\"_blank\" rel=\"noopener\">Open</a>\n        <button class=\"btn primary\" type=\"button\" id=\"leNew\">New Link</button>\n      </div>\n    </div>\n    <div class=\"row\" style=\"justify-content:flex-end\"><button class=\"btn\" type=\"button\" id=\"leClose\">Close</button></div>\n  </div>\n</div>\n\n<div class=\"overlay\" id=\"payEd\" hidden>\n  <div class=\"sheet\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"peTitle\">\n    <h2 id=\"peTitle\">Add Payment</h2>\n    <div class=\"form\">\n      <div class=\"field full\"><label for=\"pShop\">Shop</label><select class=\"input\" id=\"pShop\"></select></div>\n      <div class=\"field\"><label for=\"pDate\">Payment Date</label><input class=\"input\" id=\"pDate\" type=\"date\"></div>\n      <div class=\"field\"><label for=\"pAmt\">Amount (৳)</label><input class=\"input\" id=\"pAmt\" type=\"number\" min=\"0\" step=\"1\" inputmode=\"decimal\"></div>\n      <div class=\"field full\"><label for=\"pNotes\">Notes</label><input class=\"input\" id=\"pNotes\" maxlength=\"200\"></div>\n    </div>\n    <p class=\"err\" id=\"peErr\" role=\"alert\"></p>\n    <div class=\"row spread\">\n      <button class=\"btn danger\" type=\"button\" id=\"peCancelPay\">Cancel Payment</button>\n      <div class=\"row\"><button class=\"btn\" type=\"button\" id=\"peClose\">Close</button><button class=\"btn primary\" type=\"button\" id=\"peSave\">Save</button></div>\n    </div>\n  </div>\n</div>\n\n<div class=\"overlay\" id=\"paidEd\" hidden>\n  <div class=\"sheet\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"pdTitle\">\n    <h2 id=\"pdTitle\">Mark As Paid</h2>\n    <p id=\"pdInfo\"></p>\n    <p class=\"sub\">The next payment is added one month later.</p>\n    <p class=\"err\" id=\"pdErr\" role=\"alert\"></p>\n    <div class=\"row\" style=\"justify-content:flex-end\"><button class=\"btn\" type=\"button\" id=\"pdClose\">Cancel</button><button class=\"btn good\" type=\"button\" id=\"pdOk\">Confirm Paid</button></div>\n  </div>\n</div>\n\n<div class=\"toast\" id=\"toast\" hidden></div>\n\n<script>\nconst API = \"{{ 'https://' + String($json.headers['x-forwarded-host'] || $json.headers.host || '').replace(/[^A-Za-z0-9.:-]/g, '') + '/webhook/shelfwise-admin-api' }}\";\nconst $ = (id) => document.getElementById(id);\nlet password = '';\nlet data = { clients: [], payments: [], today: '' };\nlet cPage = 1, pPage = 1;\nconst PER = 10;\ntry { password = sessionStorage.getItem('sw_admin') || ''; } catch (e) {}\n\nconst taka = (n) => '৳' + Number(n || 0).toLocaleString('en-IN');\nconst todayStr = () => data.today || new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Dhaka' });\nconst daysBetween = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst toast = (m) => { const t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, 3000); };\nconst td = (v, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = v === null || v === undefined || v === '' ? '—' : String(v); return c; };\nconst chipTd = (text, tone) => { const c = document.createElement('td'); const s = document.createElement('span'); s.className = 'chip ' + tone; s.textContent = text; c.append(s); return c; };\nconst btn = (label, cls, fn, aria) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn small ' + (cls || ''); b.textContent = label; if (aria) b.setAttribute('aria-label', aria); b.addEventListener('click', fn); return b; };\nconst empty = (tbody, cols, text) => { const tr = document.createElement('tr'); const c = td(text, 'empty'); c.colSpan = cols; tr.append(c); tbody.replaceChildren(tr); };\n\nasync function call(action, payload) {\n  const body = new URLSearchParams({ payload: JSON.stringify({ password, action, data: payload || {} }) });\n  const r = await fetch(API, { method: 'POST', body });\n  let j = null; try { j = await r.json(); } catch (e) {}\n  if (!r.ok || !j) throw new Error('Couldn\\'t reach the server. Try again.');\n  if (!j.ok) { const e = new Error(j.error || 'Something went wrong.'); e.auth = /password/i.test(j.error || ''); throw e; }\n  return j;\n}\n\nasync function load(quiet) {\n  try {\n    const j = await call('load');\n    data = { clients: j.clients || [], payments: j.payments || [], today: j.today };\n    $('loginBox').hidden = true; $('app').hidden = false;\n    $('updated').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ' · Admin Panel (ShelfWise)';\n    renderAll();\n  } catch (e) {\n    if (e.auth) { signOut(e.message); return; }\n    if (!quiet) toast(e.message);\n  }\n}\nfunction signOut(msg) {\n  password = ''; try { sessionStorage.removeItem('sw_admin'); } catch (e) {}\n  $('app').hidden = true; $('loginBox').hidden = false; $('loginErr').textContent = msg || ''; $('pw').value = ''; $('pw').focus();\n}\n\nfunction shopStats() {\n  const shops = new Map();\n  data.clients.forEach((c) => { const s = shops.get(c.ClientName) || { active: false }; if (c.Active === 'YES') s.active = true; shops.set(c.ClientName, s); });\n  return [...shops.values()];\n}\nconst payStatus = (p) => {\n  if (p.Status === 'Paid') return { label: 'Paid', tone: 'ok', rank: 4 };\n  if (p.Status === 'Cancelled') return { label: 'Cancelled', tone: 'mute', rank: 5 };\n  const d = /^\\d{4}-\\d{2}-\\d{2}$/.test(p.PaymentDate) ? daysBetween(p.PaymentDate, todayStr()) : null;\n  if (d === null) return { label: 'No Date', tone: 'mute', rank: 3 };\n  if (d < 0) return { label: 'Overdue ' + (-d) + 'd', tone: 'bad', rank: 0, days: d };\n  if (d === 0) return { label: 'Due Today', tone: 'warn', rank: 1, days: d };\n  if (d <= 7) return { label: 'Due In ' + d + 'd', tone: 'warn', rank: 1, days: d };\n  return { label: 'Due', tone: 'mute', rank: 2, days: d };\n};\n\nfunction renderAll() { renderShops(); renderPayments(); }\n\nconst openShops = new Set();\nfunction renderShops() {\n  const st = shopStats();\n  $('kActive').textContent = st.filter((s) => s.active).length;\n  $('kPaused').textContent = st.filter((s) => !s.active).length;\n  $('kUsers').textContent = data.clients.length;\n  $('kNoLink').textContent = data.clients.filter((c) => c.Active === 'YES' && c.SheetID && !c.Link).length;\n  const q = $('cSearch').value.trim().toLowerCase();\n  const groups = new Map();\n  data.clients.forEach((c) => { if (!groups.has(c.ClientName)) groups.set(c.ClientName, []); groups.get(c.ClientName).push(c); });\n  const ROLE = { Owner: 0, Manager: 1, Staff: 2 };\n  let shops = [...groups.entries()].map(([name, users]) => ({ name, users: users.sort((a, b) => (ROLE[a.Role] ?? 9) - (ROLE[b.Role] ?? 9)) }))\n    .sort((a, b) => a.name.localeCompare(b.name));\n  if (q) shops = shops.filter((s) => s.name.toLowerCase().includes(q) || s.users.some((u) => [u.Phone, u.Notes, u.Role].join(' ').toLowerCase().includes(q)));\n  const pages = Math.max(1, Math.ceil(shops.length / PER)); if (cPage > pages) cPage = pages;\n  pager('cPager', pages, cPage, (n) => { cPage = n; renderShops(); });\n  if (!shops.length) return empty($('clientRows'), 7, q ? 'No pharmacies match.' : 'No clients yet. Tap + Add Client.');\n  const rows = [];\n  shops.slice((cPage - 1) * PER, cPage * PER).forEach((s) => {\n    const open = openShops.has(s.name) || !!q;\n    const active = s.users.some((u) => u.Active === 'YES');\n    const tr = document.createElement('tr'); tr.className = 'shop';\n    const nameTd = document.createElement('td');\n    const tg = document.createElement('button'); tg.type = 'button'; tg.className = 'toggle';\n    tg.setAttribute('aria-expanded', open ? 'true' : 'false');\n    tg.textContent = (open ? '▾ ' : '▸ ') + s.name;\n    tg.addEventListener('click', () => { if (openShops.has(s.name)) openShops.delete(s.name); else openShops.add(s.name); renderShops(); });\n    nameTd.append(tg);\n    const roles = s.users.map((u) => u.Role || 'User');\n    const summary = Object.entries(roles.reduce((m, r) => { m[r] = (m[r] || 0) + 1; return m; }, {})).map(([r, n]) => n + ' ' + r + (n > 1 ? 's' : '')).join(', ');\n    tr.append(nameTd, td(summary, 'muted'), chipTd(active ? 'Active' : 'Paused', active ? 'ok' : 'mute'), document.createElement('td'), document.createElement('td'), document.createElement('td'));\n    const a = document.createElement('td'); a.className = 'acts';\n    a.append(btn('+ User', '', () => openClient(null, s.name), 'Add user to ' + s.name));\n    tr.append(a); rows.push(tr);\n    if (open) s.users.forEach((c) => {\n      const u = document.createElement('tr'); u.className = 'user';\n      u.append(td('↳ ' + (c.Role || 'User'), 'indent'), td(c.Link ? 'Has link' : (c.SheetID ? 'No link' : 'No sheet'), 'muted nw'),\n        chipTd(c.Active === 'YES' ? 'Active' : 'Paused', c.Active === 'YES' ? 'ok' : 'mute'), td(c.Alerts, 'muted'), td(c.Phone, 'nw'), td(c.Notes, 'muted'));\n      const ua = document.createElement('td'); ua.className = 'acts';\n      ua.append(btn(c.Link ? 'Link' : 'Make Link', c.Link ? '' : 'good', () => openLink(c), 'Dashboard link for ' + c.ClientName + ' ' + c.Role), btn('Edit', '', () => openClient(c), 'Edit ' + c.ClientName + ' ' + c.Role));\n      u.append(ua); rows.push(u);\n    });\n  });\n  $('clientRows').replaceChildren(...rows);\n}\n\nfunction renderPayments() {\n  const today = todayStr(); const month = today.slice(0, 7);\n  const open = data.payments.filter((p) => p.Status !== 'Paid' && p.Status !== 'Cancelled');\n  const overdue = open.filter((p) => payStatus(p).rank === 0);\n  const due7 = open.filter((p) => payStatus(p).rank === 1);\n  $('kOverdue').textContent = overdue.length; $('kOverdueAmt').textContent = taka(overdue.reduce((s, p) => s + (p.Amount || 0), 0));\n  $('kDue7').textContent = due7.length; $('kDue7Amt').textContent = taka(due7.reduce((s, p) => s + (p.Amount || 0), 0));\n  $('kExpected').textContent = taka(data.payments.filter((p) => p.Status !== 'Cancelled' && String(p.PaymentDate).startsWith(month)).reduce((s, p) => s + (p.Amount || 0), 0));\n  $('kCollected').textContent = taka(data.payments.filter((p) => p.Status === 'Paid' && String(p.PaidOn).startsWith(month)).reduce((s, p) => s + (p.Amount || 0), 0));\n  const f = $('pFilter').value, q = $('pSearch').value.trim().toLowerCase();\n  const list = data.payments.filter((p) => (f === 'all' || (f === 'paid' ? p.Status === 'Paid' : (p.Status !== 'Paid' && p.Status !== 'Cancelled'))) && (!q || p.ClientName.toLowerCase().includes(q)))\n    .sort((a, b) => f === 'paid' ? String(b.PaidOn).localeCompare(String(a.PaidOn)) : (payStatus(a).rank - payStatus(b).rank) || String(a.PaymentDate).localeCompare(String(b.PaymentDate)));\n  const pages = Math.max(1, Math.ceil(list.length / PER)); if (pPage > pages) pPage = pages;\n  pager('pPager', pages, pPage, (n) => { pPage = n; renderPayments(); });\n  if (!list.length) return empty($('payRows'), 7, f === 'open' ? 'Nothing due. 🎉' : 'No payments here.');\n  $('payRows').replaceChildren(...list.slice((pPage - 1) * PER, pPage * PER).map((p) => {\n    const s = payStatus(p); const tr = document.createElement('tr');\n    tr.append(td(p.ClientName, 'strong'), td(p.PaymentDate, 'nw'), td(p.Amount === null ? '' : taka(p.Amount), 'r nw'), chipTd(s.label, s.tone), td(p.PaidOn, 'nw muted'), td(p.Notes, 'muted'));\n    const a = document.createElement('td'); a.className = 'acts';\n    if (p.Status !== 'Paid' && p.Status !== 'Cancelled') a.append(btn('Paid', 'good', () => openPaid(p), 'Mark ' + p.ClientName + ' paid'));\n    if (p.Status === 'Paid' || p.Status === 'Cancelled') a.append(btn('Reopen', '', () => quick('payment.reopen', { PaymentID: p.PaymentID }), 'Reopen payment'));\n    a.append(btn('Edit', '', () => openPay(p), 'Edit payment'));\n    tr.append(a); return tr;\n  }));\n}\n\nfunction pager(id, pages, current, go) {\n  const nav = $(id);\n  if (pages <= 1) { nav.replaceChildren(); return; }\n  const nums = [...new Set([1, pages, current - 1, current, current + 1].filter((n) => n >= 1 && n <= pages))].sort((a, b) => a - b);\n  const parts = [btn('‹', '', () => go(current - 1), 'Previous page')]; if (current === 1) parts[0].disabled = true;\n  nums.forEach((n, i) => {\n    if (i && n - nums[i - 1] > 1) { const g = document.createElement('span'); g.className = 'muted'; g.textContent = '…'; parts.push(g); }\n    const b = btn(String(n), '', () => go(n), 'Page ' + n); if (n === current) b.setAttribute('aria-current', 'page'); parts.push(b);\n  });\n  const nx = btn('›', '', () => go(current + 1), 'Next page'); if (current === pages) nx.disabled = true; parts.push(nx);\n  nav.replaceChildren(...parts);\n}\n\n// ---- Client editor ----\nlet editingClient = null;\nfunction openClient(c, shopName) {\n  editingClient = c || null;\n  $('ceTitle').textContent = c ? 'Edit User' : (shopName ? 'Add User · ' + shopName : 'Add Client');\n  $('cName').value = c ? c.ClientName : (shopName || ''); $('cRole').value = c && ['Owner', 'Manager', 'Staff'].includes(c.Role) ? c.Role : 'Owner';\n  $('cPhone').value = c ? c.Phone : ''; $('cActive').value = c ? c.Active : 'YES'; $('cAlerts').value = c && c.Alerts === 'OFF' ? 'OFF' : 'ON';\n  $('cChat').value = c ? c.ChatID : ''; $('cSheet').value = c ? c.SheetID : ''; $('cNotes').value = c ? c.Notes : '';\n  $('ceErr').textContent = ''; $('clientEd').hidden = false; setTimeout(() => $('cName').focus(), 0);\n}\nasync function saveClient() {\n  const payload = { ID: editingClient ? editingClient.ID : '', ClientName: $('cName').value, Role: $('cRole').value, Phone: $('cPhone').value,\n    Active: $('cActive').value, Alerts: $('cAlerts').value, ChatID: $('cChat').value, SheetID: $('cSheet').value, Notes: $('cNotes').value };\n  if (!payload.ClientName.trim()) return void ($('ceErr').textContent = 'Enter the shop name.');\n  await busy($('ceSave'), async () => { const r = await call('client.save', payload); $('clientEd').hidden = true; toast(r.message); await load(true); }, $('ceErr'));\n}\n\n// ---- Link editor ----\nlet linkClient = null;\nfunction openLink(c) {\n  linkClient = c;\n  $('leTitle').textContent = c.ClientName + ' · ' + c.Role;\n  $('leInfo').textContent = c.Link ? 'Send this link to the client. Anyone with it can edit their stock.' : (c.SheetID ? 'No link yet. Tap New Link, or the client gets one by sending /start to the bot.' : 'Add a Stock Sheet ID first (Edit).');\n  $('leLink').textContent = c.Link || '—';\n  $('leOpen').hidden = !c.Link; if (c.Link) $('leOpen').href = c.Link;\n  $('leCopy').hidden = !c.Link; $('leRemove').hidden = !c.Link; $('leNew').disabled = !c.SheetID;\n  $('leNew').textContent = c.Link ? 'New Link' : 'Make Link';\n  $('leErr').textContent = ''; $('linkEd').hidden = false;\n}\nasync function keyAction(mode) {\n  await busy(mode === 'remove' ? $('leRemove') : $('leNew'), async () => {\n    const r = await call('client.key', { ID: linkClient.ID, mode }); toast(r.message); await load(true);\n    const fresh = data.clients.find((x) => x.ID === linkClient.ID); if (fresh) openLink(fresh); else $('linkEd').hidden = true;\n  }, $('leErr'));\n}\nasync function copyLink() {\n  try { await navigator.clipboard.writeText(linkClient.Link); toast('Link copied'); }\n  catch (e) { const r = document.createRange(); r.selectNodeContents($('leLink')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Press Cmd+C to copy'); }\n}\n\n// ---- Payment editor ----\nlet editingPay = null;\nfunction openPay(p) {\n  editingPay = p || null;\n  $('peTitle').textContent = p ? 'Edit Payment' : 'Add Payment';\n  const shops = [...new Set(data.clients.map((c) => c.ClientName))].sort((a, b) => a.localeCompare(b));\n  $('pShop').replaceChildren(...shops.map((s) => new Option(s, s)));\n  $('pShop').value = p ? p.ClientName : (shops[0] || '');\n  $('pDate').value = p ? p.PaymentDate : todayStr();\n  $('pAmt').value = p && p.Amount !== null ? p.Amount : '';\n  $('pNotes').value = p ? p.Notes : '';\n  $('peCancelPay').hidden = !p || p.Status === 'Cancelled' || p.Status === 'Paid';\n  $('peErr').textContent = ''; $('payEd').hidden = false;\n}\nasync function savePay() {\n  const payload = { PaymentID: editingPay ? editingPay.PaymentID : '', ClientName: $('pShop').value, PaymentDate: $('pDate').value, Amount: $('pAmt').value, Notes: $('pNotes').value };\n  if (!payload.PaymentDate) return void ($('peErr').textContent = 'Pick a payment date.');\n  await busy($('peSave'), async () => { const r = await call('payment.save', payload); $('payEd').hidden = true; toast(r.message); await load(true); }, $('peErr'));\n}\nlet paidTarget = null;\nfunction openPaid(p) {\n  paidTarget = p;\n  $('pdInfo').textContent = p.ClientName + (p.Amount !== null ? ' paid ' + taka(p.Amount) : ' paid') + ' for ' + p.PaymentDate + '?';\n  $('pdErr').textContent = ''; $('paidEd').hidden = false;\n}\nasync function quick(action, payload, button, errEl) {\n  await busy(button, async () => { const r = await call(action, payload); toast(r.message); await load(true); }, errEl);\n}\nasync function busy(button, fn, errEl) {\n  if (button) button.disabled = true; if (errEl) errEl.textContent = '';\n  try { await fn(); }\n  catch (e) { if (e.auth) return signOut(e.message); if (errEl) errEl.textContent = e.message; else toast(e.message); }\n  finally { if (button) button.disabled = false; }\n}\n\n// ---- Wiring ----\n$('loginBox').addEventListener('submit', async (e) => {\n  e.preventDefault(); password = $('pw').value; $('loginErr').textContent = '';\n  $('loginBtn').disabled = true;\n  try { await call('load'); try { sessionStorage.setItem('sw_admin', password); } catch (x) {} await load(); }\n  catch (x) { $('loginErr').textContent = x.message; }\n  finally { $('loginBtn').disabled = false; }\n});\n$('logoutBtn').addEventListener('click', () => signOut(''));\n$('refreshBtn').addEventListener('click', () => load());\ndocument.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => {\n  document.querySelectorAll('.tab').forEach((x) => { const on = x === t; x.setAttribute('aria-selected', on ? 'true' : 'false'); const p = $(x.getAttribute('aria-controls')); p.hidden = !on; if (on) p.style.display = 'flex'; });\n}));\n$('cSearch').addEventListener('input', () => { cPage = 1; renderShops(); });\n$('pSearch').addEventListener('input', () => { pPage = 1; renderPayments(); });\n$('pFilter').addEventListener('change', () => { pPage = 1; renderPayments(); });\n$('addClientBtn').addEventListener('click', () => openClient(null));\n$('cSearch').setAttribute('placeholder', 'Search pharmacy, phone or note');\n$('ceCancel').addEventListener('click', () => { $('clientEd').hidden = true; });\n$('ceSave').addEventListener('click', saveClient);\n$('leClose').addEventListener('click', () => { $('linkEd').hidden = true; });\n$('leNew').addEventListener('click', () => keyAction('new'));\n$('leRemove').addEventListener('click', () => keyAction('remove'));\n$('leCopy').addEventListener('click', copyLink);\n$('addPayBtn').addEventListener('click', () => openPay(null));\n$('peClose').addEventListener('click', () => { $('payEd').hidden = true; });\n$('peSave').addEventListener('click', savePay);\n$('peCancelPay').addEventListener('click', () => quick('payment.cancel', { PaymentID: editingPay.PaymentID }, $('peCancelPay'), $('peErr')).then(() => { if (!$('peErr').textContent) $('payEd').hidden = true; }));\n$('pdClose').addEventListener('click', () => { $('paidEd').hidden = true; });\n$('pdOk').addEventListener('click', () => quick('payment.paid', { PaymentID: paidTarget.PaymentID }, $('pdOk'), $('pdErr')).then(() => { if (!$('pdErr').textContent) $('paidEd').hidden = true; }));\ndocument.querySelectorAll('.overlay').forEach((o) => o.addEventListener('click', (e) => { if (e.target === o) o.hidden = true; }));\ndocument.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.overlay').forEach((o) => { o.hidden = true; }); });\n\nif (password) load(true); else $('pw').focus();\n</script>\n</body>\n</html>\n",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              },
+              {
+                "name": "X-Robots-Tag",
+                "value": "noindex"
+              }
+            ]
+          }
+        }
+      },
+      "id": "72f1e2fc-28b7-4e86-8917-85af4d9935a3",
+      "name": "Send Admin Page",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "shelfwise-admin-api",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "3d0e603d-8828-4d7e-ae54-7606c7763a16",
+      "name": "Admin API",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "1845318c-24de-4466-9671-8ded1c61732d"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== Admin password (change this, 12+ characters) =====\nconst ADMIN_PASSWORD = 'CHANGE-ME';\n\nconst body = $('Admin API').first().json.body || {};\nlet p = {};\ntry { p = typeof body.payload === 'string' ? JSON.parse(body.payload) : (body.payload || body); } catch (e) { p = {}; }\nconst ok = ADMIN_PASSWORD !== 'CHANGE-ME' && ADMIN_PASSWORD.length >= 12 && String(p.password || '') === ADMIN_PASSWORD;\nif (!ok) return [{ json: { ok: false, response: { ok: false, error: ADMIN_PASSWORD === 'CHANGE-ME' ? 'Set your admin password in the Login node first.' : 'Wrong password.' } } }];\nreturn [{ json: { ok: true, action: String(p.action || 'load'), data: p.data || {} } }];\n"
+      },
+      "id": "a27e7b35-3388-44ff-a98a-a4c76a90122c",
+      "name": "Login",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "6da9c4f4-c8e4-400c-897b-acea0e987acf",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8b319690-9341-4d00-a156-7272c27f4c59",
+      "name": "Logged In?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_CLIENTS_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clients",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "152fc3c4-043c-4144-8f25-b6397806adaf",
+      "name": "Read Clients",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        220
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_CLIENTS_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Payments",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "daef7f3a-67d1-4d83-a5c9-a12525523943",
+      "name": "Read Payments",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        220
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== Admin: read data or plan a change =====\nconst DASHBOARD_URL = 'https://YOUR-N8N-DOMAIN/webhook/shelfwise';\nconst req = $('Login').first().json;\nconst action = req.action;\nconst d = req.data || {};\nconst clients = $('Read Clients').all().map(i => i.json).filter(r => String(r.ClientName || '').trim());\nconst payments = $input.all().map(i => i.json).filter(r => String(r.PaymentID || '').trim());\n\nconst out = { clientUpdates: [], clientAdds: [], paymentUpdates: [], paymentAdds: [] };\nconst done = (response) => [{ json: { ...out, response } }];\nconst fail = (msg) => [{ json: { clientUpdates: [], clientAdds: [], paymentUpdates: [], paymentAdds: [], response: { ok: false, error: msg } } }];\nconst text = (v, max) => String(v ?? '').replace(/[\\r\\n\\t]/g, ' ').trim().slice(0, max || 120);\nconst isDate = (s) => /^\\d{4}-\\d{2}-\\d{2}$/.test(String(s || ''));\nconst today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Dhaka' });\nconst addMonth = (s) => {\n  const [y, m, day] = s.split('-').map(Number);\n  const ny = m === 12 ? y + 1 : y, nm = m === 12 ? 1 : m + 1;\n  const last = new Date(Date.UTC(ny, nm, 0)).getUTCDate();\n  return ny + '-' + String(nm).padStart(2, '0') + '-' + String(Math.min(day, last)).padStart(2, '0');\n};\nconst nextId = (rows, field, prefix, extra) => {\n  const n = rows.map(r => parseInt(String(r[field] || '').replace(/\\D/g, ''), 10)).filter(x => !isNaN(x));\n  return prefix + String((n.length ? Math.max(...n) : 0) + 1 + (extra || 0)).padStart(3, '0');\n};\nconst newKey = () => {\n  const a = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';\n  let s = '';\n  const c = globalThis.crypto;\n  if (c && c.getRandomValues) { const b = new Uint32Array(24); c.getRandomValues(b); for (const x of b) s += a[x % a.length]; }\n  else { for (let i = 0; i < 24; i++) s += a[Math.floor(Math.random() * a.length)]; }\n  return s;\n};\nconst phone = (v) => {\n  let x = String(v || '').replace(/\\D/g, '');\n  if (x.length === 10 && x.startsWith('1')) x = '0' + x;\n  if (x.length === 13 && x.startsWith('880')) x = '0' + x.slice(3);\n  return x;\n};\n\nif (action === 'load') {\n  return done({\n    ok: true, today,\n    clients: clients.map(c => ({\n      ID: text(c.ID, 20), ClientName: text(c.ClientName), ChatID: text(c.ChatID, 20), SheetID: text(c.SheetID, 100),\n      Active: String(c.Active || 'YES').trim().toUpperCase() === 'NO' ? 'NO' : 'YES', Role: text(c.Role, 30),\n      Alerts: text(c.Alerts, 10), Phone: phone(c.Phone), Notes: text(c.Notes, 200),\n      Link: String(c.Key || '').trim().length >= 16 ? DASHBOARD_URL + '?key=' + String(c.Key).trim() : ''\n    })),\n    payments: payments.map(p => ({\n      PaymentID: text(p.PaymentID, 20), ClientName: text(p.ClientName), PaymentDate: text(p.PaymentDate, 10),\n      Amount: p.Amount === '' || p.Amount === null || p.Amount === undefined || isNaN(Number(p.Amount)) ? null : Number(p.Amount),\n      Status: text(p.Status, 20) || 'Due', PaidOn: text(p.PaidOn, 10), Notes: text(p.Notes, 200)\n    }))\n  });\n}\n\nif (action === 'client.save') {\n  const name = text(d.ClientName).replace(/\\s+/g, ' ');\n  if (!name) return fail('Enter the shop name.');\n  const chat = String(d.ChatID || '').trim();\n  if (chat && !/^-?\\d{5,20}$/.test(chat)) return fail('Chat ID must be numbers only.');\n  const sheet = String(d.SheetID || '').trim();\n  if (sheet && !/^[A-Za-z0-9_-]{20,100}$/.test(sheet)) return fail('Sheet ID looks wrong. Copy it from the sheet URL.');\n  const row = {\n    ClientName: name, ChatID: chat, SheetID: sheet,\n    Active: String(d.Active).toUpperCase() === 'NO' ? 'NO' : 'YES',\n    Role: text(d.Role, 30) || 'Owner',\n    Alerts: String(d.Alerts).toUpperCase() === 'OFF' ? 'OFF' : 'ON',\n    Phone: phone(d.Phone), Notes: text(d.Notes, 200)\n  };\n  const existing = d.ID ? clients.find(c => String(c.ID).trim() === String(d.ID).trim()) : null;\n  if (existing) {\n    out.clientUpdates.push({ ID: String(existing.ID).trim(), ...row });\n    const oldName = String(existing.ClientName).trim();\n    const othersKeepOld = clients.some(c => c !== existing && String(c.ClientName).trim() === oldName);\n    if (oldName !== name && !othersKeepOld) {\n      payments.filter(p => String(p.ClientName).trim() === oldName).forEach(p => out.paymentUpdates.push({ PaymentID: String(p.PaymentID).trim(), ClientName: name }));\n    }\n    return done({ ok: true, message: 'Saved ' + name });\n  }\n  out.clientAdds.push({ ...row, Key: '', ID: nextId(clients, 'ID', 'C') });\n  return done({ ok: true, message: 'Added ' + name });\n}\n\nif (action === 'client.key') {\n  const c = clients.find(x => String(x.ID).trim() === String(d.ID || '').trim());\n  if (!c) return fail('Client not found. Tap Refresh.');\n  if (d.mode === 'remove') { out.clientUpdates.push({ ID: String(c.ID).trim(), Key: '' }); return done({ ok: true, message: 'Link removed. The old link stops working now.' }); }\n  out.clientUpdates.push({ ID: String(c.ID).trim(), Key: newKey() });\n  return done({ ok: true, message: 'New link made. The old link stops working now.' });\n}\n\nif (action === 'payment.save') {\n  const name = text(d.ClientName);\n  if (!name || !clients.some(c => String(c.ClientName).trim() === name)) return fail('Pick a shop.');\n  const date = text(d.PaymentDate, 10);\n  if (!isDate(date)) return fail('Pick a payment date.');\n  const amt = String(d.Amount ?? '').trim();\n  if (amt !== '' && !(/^\\d+(\\.\\d{1,2})?$/.test(amt))) return fail('Amount must be a number, like 1000.');\n  const row = { ClientName: name, PaymentDate: date, Amount: amt === '' ? '' : Number(amt), Notes: text(d.Notes, 200) };\n  const existing = d.PaymentID ? payments.find(p => String(p.PaymentID).trim() === String(d.PaymentID).trim()) : null;\n  if (existing) { out.paymentUpdates.push({ PaymentID: String(existing.PaymentID).trim(), ...row }); return done({ ok: true, message: 'Payment saved' }); }\n  out.paymentAdds.push({ PaymentID: nextId(payments, 'PaymentID', 'P'), ...row, Status: 'Due', PaidOn: '' });\n  return done({ ok: true, message: 'Payment added' });\n}\n\nif (action === 'payment.paid' || action === 'payment.cancel' || action === 'payment.reopen') {\n  const p = payments.find(x => String(x.PaymentID).trim() === String(d.PaymentID || '').trim());\n  if (!p) return fail('Payment not found. Tap Refresh.');\n  const id = String(p.PaymentID).trim();\n  if (action === 'payment.cancel') { out.paymentUpdates.push({ PaymentID: id, Status: 'Cancelled' }); return done({ ok: true, message: 'Payment cancelled' }); }\n  if (action === 'payment.reopen') { out.paymentUpdates.push({ PaymentID: id, Status: 'Due', PaidOn: '' }); return done({ ok: true, message: 'Marked as due again' }); }\n  if (String(p.Status).trim() === 'Paid') return fail('Already marked paid.');\n  out.paymentUpdates.push({ PaymentID: id, Status: 'Paid', PaidOn: today });\n  let msg = String(p.ClientName).trim() + ' marked paid';\n  if (isDate(String(p.PaymentDate).trim())) {\n    const next = addMonth(String(p.PaymentDate).trim());\n    const already = payments.some(x => String(x.ClientName).trim() === String(p.ClientName).trim() && String(x.PaymentDate).trim() === next && String(x.Status).trim() !== 'Cancelled');\n    if (!already) {\n      out.paymentAdds.push({ PaymentID: nextId(payments, 'PaymentID', 'P'), ClientName: String(p.ClientName).trim(), PaymentDate: next,\n        Amount: p.Amount === '' || p.Amount === null || p.Amount === undefined ? '' : Number(p.Amount), Status: 'Due', PaidOn: '', Notes: '' });\n      msg += '. Next payment: ' + next;\n    }\n  }\n  return done({ ok: true, message: msg });\n}\n\nreturn fail('Unknown action.');\n"
+      },
+      "id": "c7aa2621-375a-46a3-8070-00bb6c52573f",
+      "name": "Admin Plan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($input.first().json.clientUpdates || []).map(x => ({ json: x }));"
+      },
+      "id": "56a414a6-062e-434c-8ca6-c8a1c1b468ee",
+      "name": "Split Client Updates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_CLIENTS_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clients",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ClientName",
+              "displayName": "ClientName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ChatID",
+              "displayName": "ChatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SheetID",
+              "displayName": "SheetID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Active",
+              "displayName": "Active",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Alerts",
+              "displayName": "Alerts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Key",
+              "displayName": "Key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "b7db549d-5db5-4df8-829d-07b0fd53a20c",
+      "name": "Update Client",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($input.first().json.clientAdds || []).map(x => ({ json: x }));"
+      },
+      "id": "9a92e445-7cbe-4b9c-8e4e-ff6c64d26bd5",
+      "name": "Split Client Adds",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_CLIENTS_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clients",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ClientName",
+              "displayName": "ClientName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ChatID",
+              "displayName": "ChatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SheetID",
+              "displayName": "SheetID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Active",
+              "displayName": "Active",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Alerts",
+              "displayName": "Alerts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Key",
+              "displayName": "Key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "c108921e-feb9-44ba-bdcd-d3fbf8540f84",
+      "name": "Add Client",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($input.first().json.paymentUpdates || []).map(x => ({ json: x }));"
+      },
+      "id": "ac39be6e-1a36-41fe-bca0-1a9814c31c5c",
+      "name": "Split Payment Updates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_CLIENTS_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Payments",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "PaymentID"
+          ],
+          "schema": [
+            {
+              "id": "PaymentID",
+              "displayName": "PaymentID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ClientName",
+              "displayName": "ClientName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PaymentDate",
+              "displayName": "PaymentDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PaidOn",
+              "displayName": "PaidOn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "id": "e9c91532-56cb-4f1f-a385-77526982ede6",
+      "name": "Update Payment",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return ($input.first().json.paymentAdds || []).map(x => ({ json: x }));"
+      },
+      "id": "bf4dfa92-80d9-4363-89e9-f14226e66995",
+      "name": "Split Payment Adds",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_CLIENTS_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Payments",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PaymentID",
+              "displayName": "PaymentID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ClientName",
+              "displayName": "ClientName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PaymentDate",
+              "displayName": "PaymentDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PaidOn",
+              "displayName": "PaidOn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "id": "bdb8f3b9-87df-4cd0-87f2-2d6666a34a4c",
+      "name": "Add Payment",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "4e1c8be3-07c2-410e-8ee5-97fdf370b639",
+      "name": "Send Admin Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1680,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "884b3c91-7981-4224-b9c8-65a5c0c6f586",
+      "name": "Send Login Failed",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        460
+      ]
+    }
+  ],
+  "connections": {
+    "Admin Page": {
+      "main": [
+        [
+          {
+            "node": "Send Admin Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Admin API": {
+      "main": [
+        [
+          {
+            "node": "Login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login": {
+      "main": [
+        [
+          {
+            "node": "Logged In?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Logged In?": {
+      "main": [
+        [
+          {
+            "node": "Read Clients",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Login Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Clients": {
+      "main": [
+        [
+          {
+            "node": "Read Payments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Payments": {
+      "main": [
+        [
+          {
+            "node": "Admin Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Admin Plan": {
+      "main": [
+        [
+          {
+            "node": "Split Client Updates",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Client Adds",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Payment Updates",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Payment Adds",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Admin Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Client Updates": {
+      "main": [
+        [
+          {
+            "node": "Update Client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Client Adds": {
+      "main": [
+        [
+          {
+            "node": "Add Client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Payment Updates": {
+      "main": [
+        [
+          {
+            "node": "Update Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Payment Adds": {
+      "main": [
+        [
+          {
+            "node": "Add Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Dhaka"
+  },
+  "pinData": {}
+}

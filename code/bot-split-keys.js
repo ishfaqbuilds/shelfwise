@@ -1,0 +1,1 @@
+return ($input.first().json.keys || []).map(k => ({ json: k }));
